@@ -1,0 +1,10 @@
+# File besar / sumber mentah — tidak perlu ikut ke GitHub & Vercel
+*.pdf
+
+# Folder kerja sementara
+outputs/
+*.txt
+
+# OS / editor
+.DS_Store
+Thumbs.db

@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IPO Terminal · BEI 2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+html[data-theme="dark"]{
+  --bg:#080b12;--bg2:#0b1019;--panel:#0d131f;--panel2:#10182a;--line:#1b2638;--line2:#27344b;
+  --ink:#dde5f1;--ink2:#aab6c8;--muted:#6b7a92;--muted2:#4d5b72;
+  --accent:#22d3ee;--accentBg:#0c2630;--up:#00d68f;--down:#ff5470;--amber:#ffb547;
+  --upBg:#06231a;--downBg:#2a0d16;--grid:#16202f;
+  --EMMI:#3b9dff;--BACH:#00d68f;--JECX:#b08bff;--PRDL:#ffa033;--JELI:#22d3ee;
+}
+html[data-theme="light"]{
+  --bg:#eef1f5;--bg2:#e6eaf0;--panel:#ffffff;--panel2:#f4f6f9;--line:#d6dce5;--line2:#c2cad6;
+  --ink:#0c1320;--ink2:#39424f;--muted:#697587;--muted2:#9aa6b6;
+  --accent:#0c7fd4;--accentBg:#e4f1fb;--up:#0a8f5f;--down:#d92d4f;--amber:#b9770a;
+  --upBg:#e3f5ee;--downBg:#fbe7eb;--grid:#e8ecf2;
+  --EMMI:#1f6fd6;--BACH:#0a8f5f;--JECX:#7c4ddb;--PRDL:#cf7a12;--JELI:#0d8a8f;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;font-size:14.5px;-webkit-font-smoothing:antialiased;transition:background .2s,color .2s}
+.mono{font-family:'JetBrains Mono','SF Mono','Consolas','Roboto Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums}
+.wrap{max-width:1240px;margin:0 auto;padding:0 18px 90px}
+/* TICKER */
+.tickerbar{background:var(--bg2);border-bottom:1px solid var(--line);overflow:hidden;white-space:nowrap;position:relative}
+.ticker{display:inline-block;padding:9px 0;animation:scroll 32s linear infinite}
+.ticker:hover{animation-play-state:paused}
+@keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.tk{display:inline-flex;align-items:center;gap:8px;padding:0 22px;font-size:12.5px;border-right:1px solid var(--line)}
+.tk b{font-weight:700;letter-spacing:.04em}
+.tk .pr{color:var(--ink2)}
+.tk .ar{color:var(--up);font-weight:700}
+/* TOPBAR */
+.topbar{display:flex;align-items:center;gap:14px;padding:18px 0 6px}
+.brand{display:flex;align-items:center;gap:11px}
+.logo{width:38px;height:38px;border-radius:5px;background:linear-gradient(135deg,var(--accent),var(--EMMI));display:flex;align-items:center;justify-content:center;font-weight:800;color:#04121a;font-size:17px}
+.brand .t1{font-size:18px;font-weight:800;letter-spacing:.01em}
+.brand .t2{font-size:11px;color:var(--muted);letter-spacing:.16em;text-transform:uppercase;margin-top:1px}
+.statuschip{margin-left:6px;font-size:10.5px;font-weight:700;color:var(--up);background:var(--upBg);border:1px solid var(--line);padding:3px 9px;border-radius:3px;display:flex;align-items:center;gap:6px}
+.statuschip i{width:7px;height:7px;border-radius:50%;background:var(--up);display:inline-block;animation:pulse 1.6s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.toggle{margin-left:auto;display:flex;align-items:center;gap:0;background:var(--panel);border:1px solid var(--line2);border-radius:5px;overflow:hidden}
+.toggle button{background:none;border:none;color:var(--muted);padding:8px 13px;font-size:13px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px}
+.toggle button.on{background:var(--accentBg);color:var(--accent);font-weight:700}
+.intro{color:var(--ink2);max-width:820px;font-size:13.5px;margin-top:8px}
+.disc{color:var(--muted);font-size:12px;margin-top:12px;padding-left:12px;border-left:2px solid var(--line2)}
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:6px;overflow:hidden;margin:22px 0 4px}
+@media(max-width:820px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi{background:var(--panel);padding:14px 16px}
+.kpi .lbl{font-size:10px;color:var(--muted);font-weight:600;letter-spacing:.07em;text-transform:uppercase}
+.kpi .val{font-size:21px;font-weight:700;margin-top:5px}
+.kpi .sub{font-size:10.5px;color:var(--muted2);margin-top:2px}
+nav.tabs{display:flex;flex-wrap:wrap;gap:0;margin:24px 0 22px;border:1px solid var(--line);border-radius:6px;background:var(--panel);overflow:hidden;position:sticky;top:0;z-index:20}
+nav.tabs button{background:none;border:none;border-right:1px solid var(--line);color:var(--muted);padding:11px 16px;font-size:13px;font-weight:600;cursor:pointer;transition:.12s;font-family:inherit;letter-spacing:.02em}
+nav.tabs button:hover{color:var(--ink);background:var(--panel2)}
+nav.tabs button.active{color:var(--accent);background:var(--accentBg)}
+section.tab{display:none;animation:fade .25s}
+section.tab.active{display:block}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+h2.sec{font-size:18px;font-weight:800;letter-spacing:.01em;margin:2px 0 3px}
+h2.sec .hint{font-size:12px;color:var(--muted);font-weight:400}
+p.lead{color:var(--ink2);margin-bottom:18px;font-size:13.5px;max-width:820px}
+.grid{display:grid;gap:12px}
+.g5{grid-template-columns:repeat(5,1fr)}.g4{grid-template-columns:repeat(4,1fr)}.g3{grid-template-columns:repeat(3,1fr)}.g2{grid-template-columns:repeat(2,1fr)}
+@media(max-width:1000px){.g5,.g4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:680px){.g5,.g4,.g3,.g2{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:15px}
+.card.click{cursor:pointer;transition:.13s}.card.click:hover{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.tick2{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.tk-logo{width:28px;height:28px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:10.5px;color:#fff}
+.tick2 .code{font-weight:800;font-size:15px;letter-spacing:.03em}
+.tick2 .pct{margin-left:auto;font-size:10px;font-weight:700;padding:2px 7px;border-radius:3px;background:var(--bg2);color:var(--muted)}
+.name{font-size:11.5px;color:var(--muted);min-height:28px;margin-bottom:8px;line-height:1.35}
+.kv{display:flex;justify-content:space-between;font-size:12.5px;padding:5px 0;border-top:1px solid var(--line)}
+.kv .k{color:var(--muted)}.kv .v{font-weight:700}
+.spend{background:var(--accentBg);border:1px solid var(--line);border-radius:4px;padding:8px 10px;margin-top:10px;text-align:center}
+.spend .lbl{font-size:9.5px;color:var(--accent);text-transform:uppercase;letter-spacing:.07em;font-weight:700}
+.spend .amt{font-size:14.5px;font-weight:800;color:var(--accent);margin-top:2px}
+.verdict{margin-top:10px;font-size:11.5px;font-weight:700;text-align:center;padding:7px;border-radius:4px;background:var(--bg2);color:var(--ink2)}
+.card.pending{border-style:dashed}
+table.cmp{width:100%;border-collapse:collapse;font-size:12.5px;background:var(--panel);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+table.cmp th,table.cmp td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line);border-right:1px solid var(--line)}
+table.cmp th{background:var(--panel2);color:var(--muted);font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;font-weight:700}
+table.cmp td.metric{color:var(--muted);font-weight:600}
+table.cmp tr:hover td{background:var(--panel2)}
+.good{color:var(--up);font-weight:700}.bad{color:var(--down);font-weight:700}.mid{color:var(--ink2)}
+.chartbox{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;margin-bottom:12px}
+.chartbox h3{font-size:13.5px;font-weight:700;margin-bottom:2px}.chartbox .sub{color:var(--muted);font-size:11.5px;margin-bottom:13px}
+.cwrap{position:relative;height:285px}
+.note{background:var(--panel2);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:0 5px 5px 0;padding:12px 15px;font-size:12.5px;color:var(--ink2);margin:14px 0}
+.note b{color:var(--ink)}
+.pill{display:inline-block;font-size:10.5px;font-weight:600;padding:3px 9px;border-radius:3px;margin:2px;background:var(--bg2);color:var(--ink2);border:1px solid var(--line)}
+.detail-head{display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin-bottom:4px}
+.detail-head .code{font-size:22px;font-weight:800}
+.subgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+@media(max-width:780px){.subgrid{grid-template-columns:1fr}}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px}
+.box h4{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:10px;font-weight:700}
+.box ul{list-style:none}.box li{font-size:12.5px;padding:5px 0 5px 15px;position:relative;color:var(--ink2)}
+.box li::before{content:"";position:absolute;left:0;top:10px;width:5px;height:5px;background:var(--accent)}
+.risk li::before{background:var(--down)}
+.use-bar{height:24px;border-radius:4px;display:flex;overflow:hidden;margin:10px 0;font-size:9.5px;font-weight:700}
+.use-bar div{display:flex;align-items:center;justify-content:center;color:#fff;white-space:nowrap;overflow:hidden}
+.scenario{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:8px}
+.scenario th,.scenario td{padding:7px 9px;border-bottom:1px solid var(--line);text-align:center}
+.scenario th{color:var(--muted);font-size:10.5px;font-weight:700}.scenario td.day{text-align:left;font-weight:700}
+.calc{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:18px}
+.calc-row{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin-bottom:16px}
+.calc-row label{font-size:11.5px;color:var(--muted);display:block;margin-bottom:6px;font-weight:600}
+.calc-row select,.calc-row input{background:var(--bg2);border:1px solid var(--line2);color:var(--ink);padding:9px 11px;border-radius:4px;font-size:13.5px;font-family:inherit}
+.calc-row select:focus,.calc-row input:focus{outline:none;border-color:var(--accent)}
+.bigres{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:9px;margin-top:8px}
+.bigres .r{background:var(--bg2);border:1px solid var(--line);border-radius:4px;padding:13px;text-align:center}
+.bigres .r .lbl{font-size:10px;color:var(--muted)}.bigres .r .val{font-size:17px;font-weight:800;margin-top:4px}
+.score-grid{display:grid;grid-template-columns:135px repeat(5,1fr);gap:0;font-size:12.5px;border:1px solid var(--line);border-radius:6px;overflow:hidden;min-width:640px}
+.score-grid>div{padding:9px 10px;border-bottom:1px solid var(--line);border-right:1px solid var(--line)}
+.score-grid .hd{background:var(--panel2);font-weight:800;text-align:center}
+.score-grid .rl{background:var(--panel2);color:var(--muted);font-weight:600}
+.bar{height:6px;border-radius:2px;background:var(--bg2);margin-top:5px;overflow:hidden}
+.bar i{display:block;height:100%}
+.sval{font-weight:800;font-size:13px}
+footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:11.5px}
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0;font-size:11.5px;color:var(--muted)}
+.legend span{display:flex;align-items:center;gap:6px}
+.dot{width:9px;height:9px;border-radius:2px;flex:0 0 auto}
+.lotbar{display:flex;align-items:center;gap:10px;font-size:12.5px;padding:8px 0;border-bottom:1px solid var(--line)}
+.lotbar .nm{width:54px;font-weight:700}
+.lotbar .track{flex:1;height:20px;background:var(--bg2);border-radius:3px;overflow:hidden}
+.lotbar .track i{display:flex;height:100%;align-items:center;padding-left:8px;font-size:10.5px;font-weight:700;color:#fff;white-space:nowrap}
+.v,.val,.amt,.kpi .val,.scenario td,table.cmp td:not(.metric),.spend .amt{font-family:'JetBrains Mono','SF Mono','Consolas',ui-monospace,monospace;font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body>
+<div class="tickerbar"><div class="ticker" id="ticker"></div></div>
+<div class="wrap">
+<div class="topbar">
+  <div class="brand"><div class="logo">IP</div><div><div class="t1">IPO Terminal</div><div class="t2">Bursa Efek Indonesia · 2026</div></div></div>
+  <div class="statuschip"><i></i>PROSPEKTUS AWAL</div>
+  <div class="toggle" id="toggle">
+    <button data-m="light">☀ Light</button>
+    <button data-m="dark">☾ Dark</button>
+  </div>
+</div>
+<p class="intro">Terminal analisis lima calon emiten IPO: valuasi, fundamental, penggunaan dana, risiko, potensi Auto Reject Atas (ARA), dan estimasi modal pemesanan. Untuk gaya trader (flipping) dan investor jangka panjang. Angka dari prospektus awal (laporan keuangan auditan 2023–2025).</p>
+<div class="disc">Bukan ajakan beli/jual. Edukatif, berbasis prospektus awal; harga &amp; alokasi dapat berubah. Keputusan di tangan Anda.</div>
+
+<div class="kpis" id="kpis"></div>
+
+<nav class="tabs" id="tabs">
+  <button data-tab="ringkas" class="active">Ringkasan</button>
+  <button data-tab="biaya">Biaya IPO</button>
+  <button data-tab="banding">Perbandingan</button>
+  <button data-tab="grafik">Grafik</button>
+  <button data-tab="detail">Detail</button>
+  <button data-tab="ara">Skenario ARA</button>
+  <button data-tab="skor">Scorecard</button>
+  <button data-tab="edukasi">Panduan</button>
+</nav>
+
+<section class="tab active" id="ringkas">
+  <h2 class="sec">Ringkasan Emiten <span class="hint">— klik kartu untuk detail</span></h2>
+  <p class="lead">Fokus analis: harga wajar, kesehatan bisnis, modal minimal, dan rencana bila harga bergerak.</p>
+  <div class="grid g5" id="cards"></div>
+  <div class="note" style="margin-top:16px"><b>Baca cepat:</b> PER rendah = murah terhadap laba · PBV rendah = murah terhadap aset · DER tinggi = banyak utang · "Min. beli" = modal terkecil ikut IPO (1 lot = 100 lembar).</div>
+  <div class="grid g2" style="margin-top:4px">
+    <div class="card"><h4 style="color:var(--muted);font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;margin-bottom:12px">Sinyal Trader — potensi flip / ARA</h4><div id="rankTrader"></div></div>
+    <div class="card"><h4 style="color:var(--muted);font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;margin-bottom:12px">Sinyal Investor — nilai fundamental</h4><div id="rankInvestor"></div></div>
+  </div>
+</section>
+
+<section class="tab" id="biaya">
+  <h2 class="sec">Berapa yang Harus Disiapkan?</h2>
+  <p class="lead">Pembelian minimal 1 lot = 100 lembar. Modal minimum = harga × 100.</p>
+  <div class="grid g5" id="costCards" style="margin-bottom:18px"></div>
+  <div class="grid g2">
+    <div class="calc">
+      <h3 style="font-size:14.5px;font-weight:700;margin-bottom:3px">Kalkulator Modal Pesanan</h3>
+      <p style="color:var(--muted);font-size:12px;margin-bottom:15px">Tentukan jumlah lot, lihat dana yang perlu tersedia di RDN.</p>
+      <div class="calc-row">
+        <div><label>Emiten</label><select id="bEmiten"></select></div>
+        <div><label>Jumlah lot</label><input type="number" id="bLot" value="10" min="1" style="width:95px"></div>
+        <div><label>Skenario harga</label><select id="bHarga"><option value="low">Batas bawah</option><option value="high" selected>Batas atas</option></select></div>
+      </div>
+      <div class="bigres" id="bRes"></div>
+      <p style="color:var(--muted);font-size:11px;margin-top:12px">Sediakan buffer di RDN. Jika oversubscribe, jatah bisa lebih kecil. Belum termasuk fee broker (~0,1–0,3%).</p>
+    </div>
+    <div class="calc">
+      <h3 style="font-size:14.5px;font-weight:700;margin-bottom:3px">Dari Budget ke Lot</h3>
+      <p style="color:var(--muted);font-size:12px;margin-bottom:15px">Lihat dapat berapa lot tiap emiten (harga batas atas).</p>
+      <div class="calc-row"><div><label>Budget Anda (Rp)</label><input type="number" id="budget" value="5000000" step="100000" style="width:160px"></div></div>
+      <div id="budgetOut"></div>
+    </div>
+  </div>
+</section>
+
+<section class="tab" id="banding">
+  <h2 class="sec">Tabel Perbandingan</h2>
+  <p class="lead">Hijau = paling menarik di baris itu, merah = terlemah. Basis pasca-IPO, valuasi di harga batas atas.</p>
+  <div style="overflow-x:auto"><table class="cmp" id="cmpTable"></table></div>
+  <div class="legend"><span><span class="dot" style="background:var(--up)"></span> terbaik</span><span><span class="dot" style="background:var(--muted2)"></span> menengah</span><span><span class="dot" style="background:var(--down)"></span> terlemah</span></div>
+</section>
+
+<section class="tab" id="grafik">
+  <h2 class="sec">Visualisasi Kinerja &amp; Valuasi</h2>
+  <p class="lead">Tren 3 tahun dan posisi valuasi relatif.</p>
+  <div class="grid g2">
+    <div class="chartbox"><h3>Pertumbuhan Pendapatan</h3><div class="sub">Rp miliar · 2023–2025</div><div class="cwrap"><canvas id="cRev"></canvas></div></div>
+    <div class="chartbox"><h3>Laba Bersih</h3><div class="sub">Rp miliar · 2023–2025</div><div class="cwrap"><canvas id="cNp"></canvas></div></div>
+    <div class="chartbox"><h3>Valuasi: PER vs PBV</h3><div class="sub">Makin kiri-bawah = makin murah</div><div class="cwrap"><canvas id="cVal"></canvas></div></div>
+    <div class="chartbox"><h3>Risiko–Imbal Hasil: ROE vs DER</h3><div class="sub">Ideal: ROE tinggi, DER rendah</div><div class="cwrap"><canvas id="cRisk"></canvas></div></div>
+  </div>
+  <div class="chartbox"><h3>Modal Minimum (1 Lot)</h3><div class="sub">Rupiah, harga batas atas</div><div class="cwrap" style="height:215px"><canvas id="cLot"></canvas></div></div>
+  <div class="chartbox"><h3>Net Profit Margin 2025</h3><div class="sub">% laba bersih dari pendapatan</div><div class="cwrap" style="height:215px"><canvas id="cMargin"></canvas></div></div>
+</section>
+
+<section class="tab" id="detail">
+  <h2 class="sec">Detail per Emiten</h2>
+  <div class="calc-row" style="margin-bottom:14px"><div><label>Pilih emiten</label><select id="selEmiten" onchange="renderDetail(this.value)"></select></div></div>
+  <div id="detailBody"></div>
+</section>
+
+<section class="tab" id="ara">
+  <h2 class="sec">Skenario ARA — "Tahan Sampai Berapa Kali ARA?"</h2>
+  <p class="lead">Hari pertama IPO batas ARA = 2× normal. Tier Rp50–200 → 70% (hari-1) lalu 35%. Tier Rp200–5.000 → 50% (hari-1) lalu 25%. Asumsi listing di harga batas atas &amp; ARA penuh tiap hari (optimistis).</p>
+  <div class="calc">
+    <h3 style="font-size:14.5px;font-weight:700;margin-bottom:3px">Kalkulator Cuan Flipping</h3>
+    <p style="color:var(--muted);font-size:12px;margin-bottom:15px">Nilai investasi bila menjual setelah sekian kali ARA beruntun.</p>
+    <div class="calc-row">
+      <div><label>Emiten</label><select id="cEmiten"></select></div>
+      <div><label>Harga beli (IPO)</label><input type="number" id="cHarga" style="width:105px"></div>
+      <div><label>Jumlah lot</label><input type="number" id="cLot" value="10" style="width:95px"></div>
+      <div><label>Jual setelah ARA ke-</label><select id="cAra"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
+    </div>
+    <div class="bigres" id="calcRes"></div>
+    <p style="color:var(--muted);font-size:11px;margin-top:12px">Belum termasuk fee &amp; pajak. ARA beruntun TIDAK dijamin — banyak IPO hanya ARA 1–2 hari lalu turun.</p>
+  </div>
+  <div class="grid g3" style="margin-top:16px" id="araTables"></div>
+</section>
+
+<section class="tab" id="skor">
+  <h2 class="sec">Scorecard &amp; Sinyal Keputusan</h2>
+  <p class="lead">Penilaian 1–5 (5 terbaik) di tujuh dimensi. Skor trader &amp; investor memakai bobot berbeda.</p>
+  <div style="overflow-x:auto"><div class="score-grid" id="scoreGrid"></div></div>
+  <div class="grid g5" style="margin-top:18px" id="verdictCards"></div>
+  <div class="note" style="margin-top:16px"><b>Bobot trader</b> menekankan Potensi ARA, Likuiditas &amp; Momentum. <b>Bobot investor</b> menekankan Valuasi, Fundamental, Neraca &amp; Moat.</div>
+</section>
+
+<section class="tab" id="edukasi">
+  <h2 class="sec">Panduan Awam</h2>
+  <div class="grid g2">
+    <div class="box"><h4>IPO, lot &amp; harga wajar</h4><p style="font-size:12.5px;color:var(--ink2)">IPO = perusahaan jual saham ke publik pertama kali. Beli minimal 1 lot = 100 lembar. Analis cek harga vs laba (PER) &amp; aset bersih (PBV), lalu bandingkan ke perusahaan sejenis.</p></div>
+    <div class="box"><h4>PER &amp; PBV</h4><p style="font-size:12.5px;color:var(--ink2)">PER = harga ÷ laba per saham. PBV = harga ÷ nilai buku per saham. PBV 1 = dihargai persis aset bersihnya.</p></div>
+    <div class="box"><h4>ARA &amp; ARB</h4><p style="font-size:12.5px;color:var(--ink2)">ARA = batas naik harian; ARB = batas turun. Hari-1 IPO = 2× normal. Saham &lt;Rp200 ARA 35% (hari-1: 70%) → lebih liar.</p></div>
+    <div class="box"><h4>DER &amp; ROE</h4><p style="font-size:12.5px;color:var(--ink2)">DER = utang ÷ modal; makin tinggi makin berisiko. ROE = laba ÷ modal. ROE tinggi + DER rendah = sehat.</p></div>
+    <div class="box"><h4>Penggunaan dana IPO</h4><p style="font-size:12.5px;color:var(--ink2)">Ke ekspansi/capex umumnya positif. Bayar utang netral–positif. Porsi besar ke modal kerja wajar untuk dagang/proyek.</p></div>
+    <div class="box"><h4>Red flags</h4><p style="font-size:12.5px;color:var(--ink2)">Laba/omzet menurun jelang IPO, valuasi jauh di atas sejenis, utang sangat tinggi, divestasi besar pemilik lama, ganti pengendali setelah listing.</p></div>
+  </div>
+  <div class="note">Aturan ARA: ketentuan Auto Rejection BEI — perdagangan perdana IPO dikenakan batas 2× persentase normal sesuai kelompok harga.</div>
+</section>
+
+<footer>Sumber: prospektus awal EMMI, BACH, JECX, PRDL, JELI — Juni 2026, laporan keuangan auditan 2023–2025. Valuasi memakai harga batas atas &amp; saham pasca-IPO. Analisis edukatif, bukan rekomendasi investasi.</footer>
+</div>
+
+<script>
+/* ===== THEME ===== */
+const root=document.documentElement;
+let chartList=[];
+let drawn=false;
+function applyTheme(t){root.setAttribute('data-theme',t);try{localStorage.setItem('ipoTheme',t)}catch(e){}
+ document.querySelectorAll('#toggle button').forEach(b=>b.classList.toggle('on',b.dataset.m===t));
+ if(drawn){chartList.forEach(c=>c.destroy());chartList=[];drawn=false;if(document.getElementById('grafik').classList.contains('active'))drawCharts();}}
+(function(){let saved=null;try{saved=localStorage.getItem('ipoTheme')}catch(e){}
+ const sys=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;
+ applyTheme(saved||(sys?'dark':'light'));})();
+document.querySelectorAll('#toggle button').forEach(b=>b.onclick=()=>applyTheme(b.dataset.m));
+
+/* ===== DATA ===== */
+const E={
+EMMI:{code:"EMMI",legal:"PT Esa Medika Mandiri Tbk",color:"#3b9dff",sektor:"Distribusi alat lab, farmasi & alat kedokteran",pctPublik:30,low:446,high:515,nominal:50,raise:269.3,listing:"8 Juli 2026",underwriter:"BRI Danareksa + Ina Sekuritas (full commitment)",eps:19.58,perL:22.8,perH:26.3,pbvL:2.06,pbvH:2.17,mcapL:777,mcapH:898,rev:[173.0,384.9,454.6],np:[0.9,11.3,32.4],roe:9.0,der:2.89,nm:7.5,divMax:30,araTier:"Rp200–5.000",araDay1:50,araNorm:25,risikoUtama:"Konsentrasi pelanggan (bergantung pada sedikit pelanggan besar)",
+ plus:["Pertumbuhan pendapatan eksplosif: Rp173 M (2023) menjadi Rp455 M (2025)","Laba bersih melonjak ~35x dalam 2 tahun (basis 2023 rendah)","Punya pabrik & sedang ekspansi kapasitas (Cikupa)","Sektor alkes/diagnostik didukung anggaran kesehatan pemerintah"],
+ minus:["Utang tinggi: DER 2,89x — beban bunga besar (~Rp30 M/tahun)","Margin tipis khas distributor (~7,5%)","Risiko konsentrasi pelanggan, tanpa kontrak jangka panjang","Lonjakan laba sebagian dari basis rendah & pos non-rutin"],
+ use:[{l:"Bayar utang 18,6%",p:18.6,c:"#ffa033"},{l:"Capex 11,8%",p:11.8,c:"#00d68f"},{l:"Modal kerja 68,7%",p:68.7,c:"#3b9dff"},{l:"",p:0.9,c:"#4d5b72"}],
+ useNote:"Rp50 M lunasi sebagian utang, 11,8% bangun pabrik Cikupa, 68,7% modal kerja (persediaan & barang proyek).",
+ trader:"Menengah — harga & ukuran moderat, cerita pertumbuhan menarik minat retail.",
+ investor:"Hati-hati — pertumbuhan bagus tapi utang berat & laba kurang berkualitas; PER ~23–26x belum murah."},
+BACH:{code:"BACH",legal:"PT Bach Multi Global Tbk",color:"#00d68f",sektor:"Penjualan & sewa genset + konstruksi infrastruktur telekomunikasi",pctPublik:15.06,low:400,high:500,nominal:50,raise:307.5,listing:"Q3 2026",underwriter:"Erdikha Elit Sekuritas (full commitment)",eps:38.09,perL:10.5,perH:13.1,pbvL:2.09,pbvH:2.42,mcapL:1633,mcapH:2042,rev:[1004.2,1240.8,1732.9],np:[35.4,78.7,155.6],roe:19.9,der:1.30,nm:9.0,divMax:50,araTier:"Rp200–5.000",araDay1:50,araNorm:25,risikoUtama:"Ketergantungan pada pemasok genset",
+ plus:["Valuasi termurah secara PER (~10–13x) padahal laba tumbuh pesat","Pendapatan Rp1,0 T menjadi Rp1,7 T; laba Rp35 M menjadi Rp156 M (3 thn)","ROE tinggi (~20–30%), margin membaik","Dividen agresif: hingga 50% laba bersih","Permintaan infrastruktur telco struktural"],
+ minus:["Opsi GTP jadi pengendali 51% SETELAH listing — potensi perubahan kontrol & overhang","Bergantung pada pemasok genset","Bisnis proyek/konstruksi — arus kas bisa lumpy","Float publik kecil (15%) — likuiditas perlu dipantau"],
+ use:[{l:"Bayar utang 30%",p:30,c:"#ffa033"},{l:"Modal kerja (beli genset) 70%",p:70,c:"#3b9dff"}],
+ useNote:"Rp91 M lunasi sebagian utang Bank Permata, Rp213,5 M modal kerja membeli genset (dijual & disewakan).",
+ trader:"Menengah — fundamental kuat menarik minat, tapi harga & kapitalisasi besar (gerak tak se-liar small cap).",
+ investor:"Paling menarik secara nilai — murah + tumbuh + ROE tinggi. Catatan: pantau perubahan pengendali (GTP 51%) & tata kelola."},
+JECX:{code:"JECX",legal:"PT Nitrasanata Dharma Tbk (JEC – Jakarta Eye Center)",color:"#b08bff",sektor:"Rumah sakit & klinik mata (brand JEC)",pctPublik:15,low:1200,high:1400,nominal:16,raise:683.2,listing:"Q3 2026",underwriter:"Trimegah Sekuritas (full commitment)",eps:22.28,perL:53.9,perH:62.8,pbvL:3.25,pbvH:3.60,mcapL:3904,mcapH:4555,rev:[825.1,887.7,926.8],np:[127.3,62.5,72.5],roe:6.0,der:0.79,nm:7.8,divMax:50,araTier:"Rp200–5.000",araDay1:50,araNorm:25,risikoUtama:"Ketergantungan pada dokter, perawat & tenaga profesional kunci",
+ plus:["Brand premium & terpercaya (JEC) di layanan kesehatan mata","Neraca paling sehat: DER hanya 0,79x","Dividen hingga 50% laba bersih","Dana untuk capex/peralatan & ekspansi RS"],
+ minus:["Sangat mahal: PER ~54–63x, PBV ~3,3–3,6x","Laba menurun: Rp127 M (2023) menjadi Rp72 M (2025); pertumbuhan pendapatan ~6%/thn","5% penawaran adalah divestasi (pemilik lama jual saham, dana tak masuk perusahaan)","Margin turun, ketergantungan SDM dokter kunci"],
+ use:[{l:"Bayar utang 9%",p:9,c:"#ffa033"},{l:"Capex / peralatan & ekspansi 91%",p:91,c:"#00d68f"}],
+ useNote:"Rp40 M lunasi sebagian utang BCA, sisanya capex: mesin/peralatan klinik, renovasi klinik Bekasi, peralatan RS JEC.",
+ trader:"Lemah — harga tinggi (Rp1.200–1.400) & kapitalisasi besar (>Rp4 T); retail jarang menggoreng saham semahal ini.",
+ investor:"Kualitas tinggi tapi harga kemahalan (PER 54–63x untuk laba menurun). Margin of safety tipis; menarik hanya bila terdiskon jauh."},
+PRDL:{code:"PRDL",legal:"PT Prodia Diagnostic Line Tbk",color:"#ffa033",sektor:"Manufaktur alat kesehatan diagnostik",pctPublik:30,low:100,high:120,nominal:50,raise:62.7,listing:"Q3 2026",underwriter:"Sucor Sekuritas (full commitment)",eps:9.75,perL:10.3,perH:12.3,pbvL:1.29,pbvH:1.43,mcapL:174,mcapH:209,rev:[111.8,58.7,74.4],np:[35.8,10.0,17.0],roe:12.6,der:1.34,nm:22.8,divMax:20,araTier:"Rp50–200",araDay1:70,araNorm:35,risikoUtama:"Ketergantungan pada belanja pemerintah di sektor kesehatan",
+ plus:["Harga terendah (Rp100–120) — tier ARA paling agresif (70% hari-1, 35% berikut)","Kapitalisasi mungil (~Rp174–209 M) — paling ringan digerakkan","Valuasi murah: PER ~10–12x, PBV ~1,3x","Margin bersih tertinggi (~23%)"],
+ minus:["Laba & pendapatan sangat volatil: Rp36 M, Rp10 M, Rp17 M","Ketergantungan belanja pemerintah — pendapatan tak menentu","Likuiditas micro-cap — risiko susah keluar saat ramai","Dividen paling kecil (maks 20% laba)"],
+ use:[{l:"Bayar utang 56,8%",p:56.8,c:"#ffa033"},{l:"Capex 28,9%",p:28.9,c:"#00d68f"},{l:"Modal kerja 8,5%",p:8.5,c:"#3b9dff"},{l:"",p:5.8,c:"#4d5b72"}],
+ useNote:"Rp35,7 M lunasi utang (BCA & Panin), ~29% capex (mesin/kalibrasi, software, relayout produksi), ~8,5% modal kerja.",
+ trader:"Paling tinggi potensi flip/ARA — harga gocap-an, cap kecil, tier ARA 70%/35%. Klasik IPO gorengan, tapi paling rawan nyangkut.",
+ investor:"Murah & margin bagus, tapi laba tak konsisten & bergantung tender pemerintah. Porsi kecil/spekulatif, bukan inti portofolio."},
+JELI:{code:"JELI",legal:"PT Niramas Utama Tbk (Inaco)",color:"#22d3ee",sektor:"Industri makanan & minuman penutup (nata de coco, jelly, gummy)",pctPublik:25.93,low:900,high:1120,nominal:100,raise:392.0,listing:"7 Juli 2026",underwriter:"Sucor Sekuritas (full commitment)",eps:28.91,perL:31.1,perH:38.7,pbvL:2.64,pbvH:2.81,mcapL:1215,mcapH:1512,rev:[838.9,788.4,753.1],np:[1.7,11.6,39.0],roe:8.5,der:2.79,nm:5.2,divMax:30,araTier:"Rp200–5.000",araDay1:50,araNorm:25,risikoUtama:"Ketersediaan & volatilitas harga bahan baku",
+ plus:["Brand konsumen mapan (Inaco/Wong Coco), 4 pabrik, pasar domestik + ekspor","Laba bersih melonjak tajam: Rp1,7 M menjadi Rp39 M (3 thn) lewat efisiensi","Margin bruto naik ke ~39% (dari ~29% di 2023)","ROE tinggi ~27% (basis pra-IPO)","Dana IPO untuk ekspansi kapasitas gummy/jelly & kurangi utang"],
+ minus:["Pendapatan justru menurun: Rp839 M menjadi Rp753 M (2023 ke 2025)","Utang tinggi: DER 2,79x","Valuasi tak murah: PER ~31–39x untuk top-line yang menyusut","Risiko harga bahan baku (gula, kelapa, dll.) fluktuatif"],
+ use:[{l:"Penyertaan modal anak (NPS) 51%",p:51.04,c:"#22d3ee"},{l:"Capex mesin & gudang 18,4%",p:18.36,c:"#00d68f"},{l:"Bayar utang 10,6%",p:10.63,c:"#ffa033"},{l:"Modal kerja 20%",p:19.97,c:"#3b9dff"}],
+ useNote:"51% penyertaan modal ke anak (PT NPS) untuk capex mesin gummy/jelly, 18,4% capex mesin & gudang, 10,6% lunasi utang Mandiri (KMK), 20% modal kerja.",
+ trader:"Menengah — harga Rp900–1.120 & kapitalisasi ~Rp1,2–1,5 T; gerak tak se-liar small cap, tapi nama konsumen dikenal.",
+ investor:"Kisah turnaround margin (laba naik walau omzet turun). Brand kuat, tapi pendapatan menyusut & valuasi PER 31–39x belum murah + utang tinggi. Pantau pemulihan top-line."},
+};
+const SUCOR=[["SUPA","+24,4%","+41%","+78%"],["RATU","+24,8%","+201%","+556%"],["CYBR","+35%","+132%","+66%"],["RAAM","+24,8%","+201%","+225%"],["AWAN","+35%","+212%","+152%"],["MORA","+24,8%","+46,5%","+477%"],["MBMA","+11,3%","+1,3%","-0,6%"],["HILL","+6,4%","+26,4%","+61,6%"],["GOTO","+13%","+11,8%","-29,5%"],["ADCP","-6,2%","-28,5%","-28,5%"]];
+const UW={
+EMMI:{name:"BRI Danareksa Sekuritas + Ina Sekuritas",profil:"Sekuritas terafiliasi BUMN (Grup BRI). Peringkat #6 penjamin IPO saham & #4 obligasi/sukuk 2024 (Bloomberg league table); total emisi obligasi/sukuk Rp14,6 T (2024). Cenderung menangani emiten yang lebih mapan, bukan tipe gorengan.",deals:["Pemain besar, kuat di penjaminan obligasi/sukuk skala besar","Target 4 IPO saham/tahun (2025)","Ina Sekuritas berperan sebagai co-underwriter (lebih kecil)"],src:"Bloomberg league table 2024 (via BRIDS), IDNFinancials"},
+BACH:{name:"Erdikha Elit Sekuritas",profil:"Spesialis IPO small–mid cap; menargetkan ~4 IPO per tahun. Beberapa saham yang dikawalnya menyentuh ARA saat listing perdana — profil yang relevan untuk gaya flipping.",deals:["TOSK (2024) — penjamin emisi","SMIL — listing ke Papan Utama hingga ARA","Fokus emiten kecil–menengah"],src:"Kontan, EmitenNews, Bareksa"},
+JECX:{name:"Trimegah Sekuritas (TRIM)",profil:"Pemain papan atas, konsisten Top-5 equity underwriting 3 tahun terakhir (pangsa ~14,5%, 2022). Pengalaman 30+ tahun; tim pemasaran ritel agresif. Kerap menangani IPO jumbo — cocok untuk emiten besar seperti JEC.",deals:["AADI – Adaro Andalan (2024), raih Rp4,32 T","PSAT – Pancaran Samudera Transport","MINE – Sinar Terang Mandiri","Tercatat underwriter IPO terbanyak (2025)"],src:"Investor.id, Bisnis.com, Katadata"},
+PRDL:{name:"Sucor Sekuritas (AZ)",profil:"Bagian Grup Sucor (sejak 1989). Aktif mengawal IPO lintas sektor, dari mid-cap hingga jumbo (Superbank/SUPA oversubscribed 318x, raih ±Rp2,7 T). Beberapa IPO-nya menyentuh ARA hari pertama.",table:SUCOR,src:"Ajaib — rekam jejak IPO Sucor Sekuritas"},
+JELI:{name:"Sucor Sekuritas (AZ)",profil:"Underwriter tunggal JELI. Track record sama dengan PRDL (tabel di bawah). Beberapa IPO menyentuh ARA hari pertama; sebagian moderat atau terkoreksi (ADCP, GOTO jangka menengah).",table:SUCOR,src:"Ajaib — rekam jejak IPO Sucor Sekuritas"},
+};
+function uwHTML(k){const u=UW[k];if(!u)return '';const cell=v=>`<td class="${v.trim().startsWith('-')?'bad':'good'}">${v}</td>`;
+ let body=`<p style="font-size:12.5px;color:var(--ink2)">${u.profil}</p>`;
+ if(u.table){let rows=u.table.map(r=>`<tr><td class="day">${r[0]}</td>${cell(r[1])}${cell(r[2])}${cell(r[3])}</tr>`).join('');
+  body+=`<div style="overflow-x:auto"><table class="scenario" style="margin-top:10px"><tr><th style="text-align:left">Emiten IPO</th><th>1 Hari</th><th>1 Minggu</th><th>1 Bulan</th></tr>${rows}</table></div>`;}
+ if(u.deals){body+=`<ul style="margin-top:8px">`+u.deals.map(d=>`<li>${d}</li>`).join('')+`</ul>`;}
+ body+=`<p style="font-size:10.5px;color:var(--muted);margin-top:8px">Sumber: ${u.src}. Rekam jejak selektif — TIDAK menjamin performa IPO ini. Angka ±24,8% / 35% di hari pertama mengindikasikan dekat/di batas ARA.</p>`;
+ return `<div class="box" style="margin-top:12px"><h4 style="color:${E[k].color}">Track Record Underwriter — ${u.name}</h4>${body}</div>`;}
+
+const ORDER=["EMMI","BACH","JECX","PRDL","JELI"];
+const SCORE={
+ EMMI:{Valuasi:3,Fundamental:4,Neraca:2,"Moat/Kualitas":2,"Potensi ARA":3,"Keamanan Risiko":2.5,Likuiditas:3},
+ BACH:{Valuasi:5,Fundamental:5,Neraca:3,"Moat/Kualitas":3,"Potensi ARA":3,"Keamanan Risiko":3,Likuiditas:3.5},
+ JECX:{Valuasi:1.5,Fundamental:2,Neraca:5,"Moat/Kualitas":5,"Potensi ARA":2,"Keamanan Risiko":3.5,Likuiditas:4},
+ PRDL:{Valuasi:5,Fundamental:2,Neraca:3,"Moat/Kualitas":3,"Potensi ARA":5,"Keamanan Risiko":2,Likuiditas:2},
+ JELI:{Valuasi:2.5,Fundamental:3,Neraca:2,"Moat/Kualitas":4,"Potensi ARA":2.5,"Keamanan Risiko":2.5,Likuiditas:3.5},
+};
+const DIMS=["Valuasi","Fundamental","Neraca","Moat/Kualitas","Potensi ARA","Keamanan Risiko","Likuiditas"];
+const W_TRADER={Valuasi:1,Fundamental:0.8,Neraca:0.5,"Moat/Kualitas":0.5,"Potensi ARA":2.2,"Keamanan Risiko":0.8,Likuiditas:1.6};
+const W_INVES={Valuasi:1.8,Fundamental:2,Neraca:1.6,"Moat/Kualitas":1.8,"Potensi ARA":0.3,"Keamanan Risiko":1.4,Likuiditas:0.8};
+function wScore(c,W){let s=0,t=0;for(const d of DIMS){s+=SCORE[c][d]*W[d];t+=5*W[d];}return s/t*100;}
+const rp=n=>'Rp'+Math.round(n).toLocaleString('id');
+function cagr(a){return ((Math.pow(a[2]/a[0],0.5)-1)*100).toFixed(1);}
+
+/* TICKER */
+(function(){let h='';const one=ORDER.map(k=>{const e=E[k];return `<span class="tk"><b style="color:${e.color}">${e.code}</b><span class="pr mono">Rp${e.low}–${e.high}</span><span class="ar">ARA ${e.araDay1}%▲</span></span>`;}).join('');
+ document.getElementById('ticker').innerHTML=one+one;})();
+
+document.getElementById('kpis').innerHTML=`
+ <div class="kpi"><div class="lbl">Emiten</div><div class="val">5</div><div class="sub">termasuk JELI</div></div>
+ <div class="kpi"><div class="lbl">Dana dihimpun</div><div class="val">±Rp1,7T</div><div class="sub">akumulasi maks</div></div>
+ <div class="kpi"><div class="lbl">PER termurah</div><div class="val" style="color:var(--up)">10–13x</div><div class="sub">BACH</div></div>
+ <div class="kpi"><div class="lbl">Modal termurah</div><div class="val" style="color:var(--accent)">Rp10rb</div><div class="sub">PRDL · 1 lot</div></div>
+ <div class="kpi"><div class="lbl">ARA tertinggi</div><div class="val" style="color:var(--amber)">70%</div><div class="sub">PRDL · hari-1</div></div>`;
+
+const cards=document.getElementById('cards');
+ORDER.forEach(k=>{const e=E[k];const tr=Math.round(wScore(k,W_TRADER)),iv=Math.round(wScore(k,W_INVES));
+ cards.innerHTML+=`<div class="card click" onclick="goDetail('${k}')">
+  <div class="tick2"><span class="tk-logo" style="background:${e.color}">${e.code.slice(0,2)}</span><span class="code">${e.code}</span><span class="pct">${e.pctPublik}%</span></div>
+  <div class="name">${e.legal}</div>
+  <div class="kv"><span class="k">Harga IPO</span><span class="v">Rp${e.low}–${e.high}</span></div>
+  <div class="kv"><span class="k">PER</span><span class="v">${e.perL}–${e.perH}x</span></div>
+  <div class="kv"><span class="k">PBV</span><span class="v">${e.pbvL}–${e.pbvH}x</span></div>
+  <div class="kv"><span class="k">ARA hari-1</span><span class="v" style="color:var(--up)">${e.araDay1}%</span></div>
+  <div class="spend"><div class="lbl">Min. beli (1 lot)</div><div class="amt">${rp(e.low*100)}–${rp(e.high*100)}</div></div>
+  <div class="verdict">Trader ${tr} · Investor ${iv}<span style="color:var(--muted2)"> /100</span></div></div>`;});
+
+function rankList(W,el){const arr=ORDER.map(k=>({k,s:wScore(k,W)})).sort((a,b)=>b.s-a.s);let h='';
+ arr.forEach((x,i)=>{const e=E[x.k];h+=`<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--line)"><b style="width:16px;color:var(--muted2)">${i+1}</b><span class="dot" style="background:${e.color}"></span><b style="width:52px">${e.code}</b><div class="bar" style="flex:1;height:8px"><i style="width:${x.s}%;background:${e.color}"></i></div><b class="mono" style="width:28px;text-align:right">${Math.round(x.s)}</b></div>`;});
+ document.getElementById(el).innerHTML=h;}
+rankList(W_TRADER,'rankTrader');rankList(W_INVES,'rankInvestor');
+
+const cc=document.getElementById('costCards');
+ORDER.forEach(k=>{const e=E[k];cc.innerHTML+=`<div class="card">
+ <div class="tick2"><span class="tk-logo" style="background:${e.color}">${e.code.slice(0,2)}</span><span class="code">${e.code}</span></div>
+ <div class="kv"><span class="k">Harga/lbr</span><span class="v">Rp${e.low}–${e.high}</span></div>
+ <div class="kv"><span class="k">1 lot</span><span class="v" style="color:var(--accent)">${rp(e.low*100)}–${rp(e.high*100)}</span></div>
+ <div class="kv"><span class="k">5 lot</span><span class="v">${rp(e.low*500)}–${rp(e.high*500)}</span></div>
+ <div class="kv"><span class="k">10 lot</span><span class="v">${rp(e.low*1000)}–${rp(e.high*1000)}</span></div>
+ <div class="kv"><span class="k">100 lot</span><span class="v">${rp(e.low*10000)}–${rp(e.high*10000)}</span></div></div>`;});
+
+const be=document.getElementById('bEmiten');ORDER.forEach(k=>be.innerHTML+=`<option value="${k}">${E[k].code}</option>`);
+function runB(){const e=E[be.value];const lot=+document.getElementById('bLot').value||0;const pr=document.getElementById('bHarga').value==='low'?e.low:e.high;
+ const lembar=lot*100;const total=pr*lembar;const fee=total*0.0015;
+ document.getElementById('bRes').innerHTML=`
+  <div class="r"><div class="lbl">Harga dipakai</div><div class="val">Rp${pr}</div></div>
+  <div class="r"><div class="lbl">Total lembar</div><div class="val">${lembar.toLocaleString('id')}</div></div>
+  <div class="r"><div class="lbl">Dana pokok</div><div class="val" style="color:var(--accent)">${rp(total)}</div></div>
+  <div class="r"><div class="lbl">+ Fee est.</div><div class="val">${rp(fee)}</div></div>
+  <div class="r"><div class="lbl">Siapkan di RDN</div><div class="val" style="color:var(--up)">${rp(total+fee)}</div></div>`;}
+['bEmiten','bLot','bHarga'].forEach(id=>document.getElementById(id).addEventListener('input',runB));runB();
+
+function runBudget(){const b=+document.getElementById('budget').value||0;let h='';
+ ORDER.forEach(k=>{const e=E[k];const costLot=e.high*100;const lots=Math.floor(b/costLot);const used=lots*costLot;const pct=b?Math.min(100,used/b*100):0;
+  h+=`<div class="lotbar"><span class="nm" style="color:${e.color}">${e.code}</span><div class="track"><i style="width:${Math.max(pct,15)}%;background:${e.color}">${lots} lot</i></div><span class="mono" style="width:105px;text-align:right;font-size:11.5px;color:var(--muted)">${rp(used)}</span></div>`;});
+ document.getElementById('budgetOut').innerHTML=h+`<p style="font-size:11px;color:var(--muted);margin-top:10px">Lot maksimal dengan budget (harga batas atas). Sisa bisa untuk emiten lain / buffer.</p>`;}
+document.getElementById('budget').addEventListener('input',runBudget);runBudget();
+
+const rows=[
+ {m:"Kode listing",f:e=>`<b style="color:${e.color}">${e.code}</b>`,raw:1},
+ {m:"Sektor",f:e=>e.sektor,raw:1},
+ {m:"Harga IPO (Rp)",f:e=>`${e.low}–${e.high}`,raw:1},
+ {m:"Min. beli (1 lot)",f:e=>rp(e.high*100),key:e=>e.high*100,hi:0},
+ {m:"Dana dihimpun (Rp M)",f:e=>e.raise,key:"raise",hi:1},
+ {m:"Kapitalisasi (Rp M)",f:e=>`${e.mcapL}–${e.mcapH}`,raw:1},
+ {m:"PER (x)",f:e=>`${e.perL}–${e.perH}`,key:"perH",hi:0},
+ {m:"PBV (x)",f:e=>`${e.pbvL}–${e.pbvH}`,key:"pbvH",hi:0},
+ {m:"Pendapatan 2025 (Rp M)",f:e=>e.rev[2].toFixed(0),key:r=>r.rev[2],hi:1},
+ {m:"Laba bersih 2025 (Rp M)",f:e=>e.np[2].toFixed(0),key:r=>r.np[2],hi:1},
+ {m:"CAGR Pendapatan 23–25",f:e=>cagr(e.rev)+"%",key:r=>parseFloat(cagr(r.rev)),hi:1},
+ {m:"Tren laba",f:e=>e.np[2]>=e.np[0]?"Naik":"Turun",raw:1},
+ {m:"Net margin 2025",f:e=>e.nm+"%",key:"nm",hi:1},
+ {m:"ROE (pasca-IPO)",f:e=>e.roe+"%",key:"roe",hi:1},
+ {m:"DER (x)",f:e=>e.der,key:"der",hi:0},
+ {m:"Dividen maks",f:e=>e.divMax+"%",key:"divMax",hi:1},
+ {m:"ARA hari-1 / berikut",f:e=>`${e.araDay1}% / ${e.araNorm}%`,key:"araDay1",hi:1},
+ {m:"Risiko utama",f:e=>e.risikoUtama,raw:1},
+];
+(function(){let h=`<tr><th>Metrik</th>${ORDER.map(k=>`<th style="color:${E[k].color}">${E[k].code}</th>`).join('')}</tr>`;
+ rows.forEach(r=>{let cls={};
+  if(!r.raw&&r.key){const vals=ORDER.map(k=>typeof r.key==='function'?r.key(E[k]):E[k][r.key]);const best=r.hi?Math.max(...vals):Math.min(...vals);const worst=r.hi?Math.min(...vals):Math.max(...vals);
+   ORDER.forEach((k,i)=>{cls[k]=vals[i]===best?'good':(vals[i]===worst?'bad':'mid');});}
+  h+=`<tr><td class="metric">${r.m}</td>${ORDER.map(k=>`<td class="${cls[k]||''}">${r.f(E[k])}</td>`).join('')}</tr>`;});
+ document.getElementById('cmpTable').innerHTML=h;})();
+
+document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>{
+ document.querySelectorAll('#tabs button').forEach(x=>x.classList.remove('active'));
+ document.querySelectorAll('section.tab').forEach(x=>x.classList.remove('active'));
+ b.classList.add('active');document.getElementById(b.dataset.tab).classList.add('active');
+ if(b.dataset.tab==='grafik')drawCharts();window.scrollTo({top:0,behavior:'smooth'});});
+function goDetail(k){document.querySelectorAll('#tabs button').forEach(x=>x.classList.remove('active'));
+ document.querySelectorAll('section.tab').forEach(x=>x.classList.remove('active'));
+ document.querySelector('[data-tab=detail]').classList.add('active');document.getElementById('detail').classList.add('active');
+ document.getElementById('selEmiten').value=k;renderDetail(k);window.scrollTo({top:0,behavior:'smooth'});}
+
+const sel=document.getElementById('selEmiten');ORDER.forEach(k=>sel.innerHTML+=`<option value="${k}">${E[k].code} — ${E[k].legal}</option>`);
+function araSeq(e){let p=e.high,s=[p];p=p*(1+e.araDay1/100);s.push(Math.round(p));for(let i=0;i<3;i++){p=p*(1+e.araNorm/100);s.push(Math.round(p));}return s;}
+function renderDetail(k){const e=E[k];const tr=Math.round(wScore(k,W_TRADER)),iv=Math.round(wScore(k,W_INVES));
+ let useBar=e.use.filter(u=>u.p>0).map(u=>`<div style="width:${u.p}%;background:${u.c}">${u.p>=12?u.l:''}</div>`).join('');
+ let araRows='';const seq=araSeq(e);
+ ['IPO','ARA 1','ARA 2','ARA 3','ARA 4'].forEach((d,i)=>{araRows+=`<tr><td class="day">${d}</td><td>${rp(seq[i])}</td><td class="${i?'good':''}">${i?'+'+Math.round((seq[i]/seq[0]-1)*100)+'%':'—'}</td></tr>`;});
+ document.getElementById('detailBody').innerHTML=`
+  <div class="card"><div class="detail-head"><span class="tk-logo" style="background:${e.color};width:36px;height:36px;font-size:12px">${e.code.slice(0,2)}</span><span class="code">${e.code}</span><span style="color:var(--muted)">${e.legal}</span></div>
+   <p style="color:var(--muted);font-size:12.5px;margin:6px 0 10px">${e.sektor}</p>
+   <div style="display:flex;gap:6px;flex-wrap:wrap"><span class="pill">Listing: ${e.listing}</span><span class="pill">${e.underwriter}</span><span class="pill" style="color:var(--accent)">Min. beli ${rp(e.low*100)}–${rp(e.high*100)}</span><span class="pill">Trader ${tr} · Investor ${iv}</span></div></div>
+  <div class="subgrid">
+   <div class="box"><h4>Angka Kunci Valuasi</h4>
+    <div class="kv"><span class="k">Harga IPO</span><span class="v">Rp${e.low}–${e.high}</span></div>
+    <div class="kv"><span class="k">EPS 2025</span><span class="v">Rp${e.eps}</span></div>
+    <div class="kv"><span class="k">PER</span><span class="v">${e.perL}–${e.perH}x</span></div>
+    <div class="kv"><span class="k">PBV</span><span class="v">${e.pbvL}–${e.pbvH}x</span></div>
+    <div class="kv"><span class="k">Kapitalisasi</span><span class="v">Rp${e.mcapL}–${e.mcapH} M</span></div>
+    <div class="kv"><span class="k">ROE / DER</span><span class="v">${e.roe}% / ${e.der}x</span></div>
+    <div class="kv"><span class="k">Net margin 2025</span><span class="v">${e.nm}%</span></div>
+    <div class="kv"><span class="k">Dividen maks</span><span class="v">${e.divMax}% laba</span></div></div>
+   <div class="box"><h4>Kinerja 3 Tahun (Rp M)</h4>
+    <div class="kv"><span class="k">Pendapatan 23-25</span><span class="v">${e.rev[0]} · ${e.rev[1]} · ${e.rev[2]}</span></div>
+    <div class="kv"><span class="k">Laba bersih 23-25</span><span class="v">${e.np[0]} · ${e.np[1]} · ${e.np[2]}</span></div>
+    <div class="kv"><span class="k">CAGR pendapatan</span><span class="v">${cagr(e.rev)}%</span></div>
+    <h4 style="margin-top:16px">Rencana Penggunaan Dana</h4><div class="use-bar">${useBar}</div>
+    <p style="font-size:11.5px;color:var(--ink2)">${e.useNote}</p></div></div>
+  <div class="subgrid">
+   <div class="box"><h4>Faktor Positif</h4><ul>${e.plus.map(x=>`<li>${x}</li>`).join('')}</ul></div>
+   <div class="box risk"><h4 style="color:var(--down)">Faktor Risiko</h4><ul>${e.minus.map(x=>`<li>${x}</li>`).join('')}</ul><p style="font-size:11.5px;color:var(--down);margin-top:8px"><b>Risiko utama:</b> ${e.risikoUtama}</p></div></div>
+  <div class="subgrid">
+   <div class="box"><h4>Pandangan Trader</h4><p style="font-size:13px;color:var(--ink2)">${e.trader}</p>
+    <table class="scenario"><tr><th>Tahap</th><th>Harga</th><th>Gain</th></tr>${araRows}</table>
+    <p style="font-size:10.5px;color:var(--muted);margin-top:6px">Tier ${e.araTier} · ARA ${e.araDay1}% (hari-1) lalu ${e.araNorm}%.</p></div>
+   <div class="box"><h4>Pandangan Investor Jangka Panjang</h4><p style="font-size:13px;color:var(--ink2)">${e.investor}</p></div></div>${uwHTML(k)}`;}
+renderDetail('EMMI');
+
+const ce=document.getElementById('cEmiten');ORDER.forEach(k=>ce.innerHTML+=`<option value="${k}">${E[k].code}</option>`);
+function fillCalc(){document.getElementById('cHarga').value=E[ce.value].high;runCalc();}
+function runCalc(){const e=E[ce.value];const h=+document.getElementById('cHarga').value;const lot=+document.getElementById('cLot').value;const n=+document.getElementById('cAra').value;
+ let p=h;for(let i=0;i<n;i++){p=p*(1+(i===0?e.araDay1:e.araNorm)/100);}const lembar=lot*100;const modal=h*lembar;const nilai=p*lembar;
+ document.getElementById('calcRes').innerHTML=`
+  <div class="r"><div class="lbl">Modal awal</div><div class="val">${rp(modal)}</div></div>
+  <div class="r"><div class="lbl">Harga stlh ${n}× ARA</div><div class="val">${rp(p)}</div></div>
+  <div class="r"><div class="lbl">Nilai jual</div><div class="val" style="color:var(--up)">${rp(nilai)}</div></div>
+  <div class="r"><div class="lbl">Profit kotor</div><div class="val" style="color:var(--up)">+${rp(nilai-modal)}</div></div>
+  <div class="r"><div class="lbl">Return</div><div class="val" style="color:var(--up)">+${Math.round((p/h-1)*100)}%</div></div>`;}
+['cEmiten','cHarga','cLot','cAra'].forEach(id=>document.getElementById(id).addEventListener('input',()=>{id==='cEmiten'?fillCalc():runCalc();}));fillCalc();
+
+const at=document.getElementById('araTables');
+ORDER.forEach(k=>{const e=E[k];const seq=araSeq(e);let r='';
+ ['Harga IPO','ARA 1','ARA 2','ARA 3','ARA 4'].forEach((d,i)=>{r+=`<tr><td class="day">${d}</td><td>${rp(seq[i])}</td><td class="${i?'good':''}">${i?'+'+Math.round((seq[i]/seq[0]-1)*100)+'%':'—'}</td></tr>`;});
+ at.innerHTML+=`<div class="box"><h4 style="color:${e.color}">${e.code} · tier ${e.araTier}</h4><p style="font-size:11.5px;color:var(--muted);margin-bottom:6px">ARA ${e.araDay1}% (hari-1), ${e.araNorm}% berikut. Listing di Rp${e.high}.</p><table class="scenario"><tr><th>Tahap</th><th>Harga</th><th>Akum.</th></tr>${r}</table></div>`;});
+
+function colSc(v){return v>=4.2?'var(--up)':v>=3?'var(--accent)':v>=2?'var(--amber)':'var(--down)';}
+(function(){let sg=`<div class="hd rl">Dimensi</div>`+ORDER.map(k=>`<div class="hd" style="color:${E[k].color}">${E[k].code}</div>`).join('');
+ DIMS.forEach(d=>{sg+=`<div class="rl">${d}</div>`+ORDER.map(k=>{const v=SCORE[k][d];return `<div><span class="sval" style="color:${colSc(v)}">${v}</span><div class="bar"><i style="width:${v/5*100}%;background:${colSc(v)}"></i></div></div>`;}).join('');});
+ sg+=`<div class="rl" style="font-weight:800">Skor Trader</div>`+ORDER.map(k=>`<div class="mono" style="font-weight:800;color:${E[k].color}">${Math.round(wScore(k,W_TRADER))}</div>`).join('');
+ sg+=`<div class="rl" style="font-weight:800">Skor Investor</div>`+ORDER.map(k=>`<div class="mono" style="font-weight:800;color:${E[k].color}">${Math.round(wScore(k,W_INVES))}</div>`).join('');
+ document.getElementById('scoreGrid').innerHTML=sg;})();
+const verdicts={
+ EMMI:{t:"Spekulatif–Momentum",txt:"Pertumbuhan kuat menarik untuk trading, tapi utang berat & valuasi belum murah membuatnya kurang ideal dipegang lama."},
+ BACH:{t:"Value + Growth",txt:"Termurah + tumbuh + ROE tinggi. Kandidat utama dipegang, asal nyaman dengan rencana perubahan pengendali GTP 51%."},
+ JECX:{t:"Kualitas, tapi Mahal",txt:"Bisnis bagus (JEC) & neraca sehat, tetapi PER 54–63x untuk laba menurun. Menarik hanya bila harga jatuh signifikan."},
+ PRDL:{t:"High-Risk Flip",txt:"Potensi ARA tertinggi (harga gocap, cap kecil). Untuk trader disiplin cut-loss. Bukan inti portofolio karena laba labil."},
+ JELI:{t:"Turnaround Margin",txt:"Laba melonjak lewat efisiensi meski omzet turun. Brand mapan, tapi PER 31–39x & utang tinggi menuntut bukti pemulihan omzet."},
+};
+(function(){let vc='';ORDER.forEach(k=>{const e=E[k],v=verdicts[k];vc+=`<div class="card"><div class="tick2"><span class="tk-logo" style="background:${e.color}">${e.code.slice(0,2)}</span><span class="code">${e.code}</span></div><div class="verdict" style="margin:4px 0 9px;color:${e.color}">${v.t}</div><p style="font-size:12px;color:var(--ink2)">${v.txt}</p></div>`;});
+ document.getElementById('verdictCards').innerHTML=vc;})();
+
+function themeC(){const cs=getComputedStyle(root);return {grid:cs.getPropertyValue('--grid').trim(),tc:cs.getPropertyValue('--muted').trim()};}
+function drawCharts(){if(drawn)return;drawn=true;const yrs=['2023','2024','2025'];const {grid,tc}=themeC();
+ const ds=key=>ORDER.map(k=>({label:E[k].code,data:E[k][key],borderColor:E[k].color,backgroundColor:E[k].color+'22',tension:.3,borderWidth:2,pointRadius:3}));
+ const opt=()=>({responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:tc,usePointStyle:true,boxWidth:7}}},scales:{x:{ticks:{color:tc},grid:{color:grid}},y:{ticks:{color:tc},grid:{color:grid}}}});
+ chartList.push(new Chart(cRev,{type:'line',data:{labels:yrs,datasets:ds('rev')},options:opt()}));
+ chartList.push(new Chart(cNp,{type:'line',data:{labels:yrs,datasets:ds('np')},options:opt()}));
+ chartList.push(new Chart(cVal,{type:'scatter',data:{datasets:ORDER.map(k=>({label:E[k].code,data:[{x:(E[k].perL+E[k].perH)/2,y:(E[k].pbvL+E[k].pbvH)/2}],backgroundColor:E[k].color,pointRadius:10,pointHoverRadius:12}))},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:tc,usePointStyle:true,boxWidth:7}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: PER ${c.parsed.x.toFixed(0)}x, PBV ${c.parsed.y.toFixed(1)}x`}}},scales:{x:{title:{display:true,text:'PER (x)',color:tc},ticks:{color:tc},grid:{color:grid}},y:{title:{display:true,text:'PBV (x)',color:tc},ticks:{color:tc},grid:{color:grid}}}}}));
+ chartList.push(new Chart(cRisk,{type:'scatter',data:{datasets:ORDER.map(k=>({label:E[k].code,data:[{x:E[k].der,y:E[k].roe}],backgroundColor:E[k].color,pointRadius:10}))},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:tc,usePointStyle:true,boxWidth:7}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: DER ${c.parsed.x}x, ROE ${c.parsed.y}%`}}},scales:{x:{title:{display:true,text:'DER (kanan = lebih berisiko)',color:tc},ticks:{color:tc},grid:{color:grid}},y:{title:{display:true,text:'ROE % (atas = lebih baik)',color:tc},ticks:{color:tc},grid:{color:grid}}}}}));
+ chartList.push(new Chart(cLot,{type:'bar',data:{labels:ORDER.map(k=>E[k].code),datasets:[{label:'Modal 1 lot',data:ORDER.map(k=>E[k].high*100),backgroundColor:ORDER.map(k=>E[k].color)}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>rp(c.parsed.y)}}},scales:{x:{ticks:{color:tc},grid:{display:false}},y:{ticks:{color:tc,callback:v=>'Rp'+v.toLocaleString('id')},grid:{color:grid}}}}}));
+ chartList.push(new Chart(cMargin,{type:'bar',data:{labels:ORDER.map(k=>E[k].code),datasets:[{label:'Net margin %',data:ORDER.map(k=>E[k].nm),backgroundColor:ORDER.map(k=>E[k].color)}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:tc},grid:{display:false}},y:{ticks:{color:tc},grid:{color:grid}}}}}));
+}
+</script>
+</body>
+</html>
