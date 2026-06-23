@@ -116,15 +116,15 @@ table.cmp tr:hover td{background:var(--panel2)}
 .bigres{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:9px;margin-top:8px}
 .bigres .r{background:var(--bg2);border:1px solid var(--line);border-radius:4px;padding:13px;text-align:center}
 .bigres .r .lbl{font-size:10px;color:var(--muted)}.bigres .r .val{font-size:17px;font-weight:800;margin-top:4px}
-.pickgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:8px 0 4px}
-@media(max-width:680px){.pickgrid{grid-template-columns:1fr}}
-.pickrow{display:flex;align-items:center;gap:7px;background:var(--bg2);border:1px solid var(--line);border-radius:5px;padding:7px 9px;cursor:pointer;transition:.12s}
+.pickgrid{display:grid;grid-template-columns:1fr;gap:7px;margin:8px 0 4px}
+.pickrow{display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--line);border-radius:5px;padding:7px 10px;cursor:pointer;transition:.12s;flex-wrap:wrap}
 .pickrow.off{opacity:.4}
 .pickrow input[type=checkbox]{width:15px;height:15px;accent-color:var(--accent);cursor:pointer;flex:0 0 auto}
 .pickrow .pc{font-weight:800;font-size:13px;flex:0 0 auto}
-.pickrow .pl{font-size:9.5px;color:var(--muted2);flex:1;min-width:0;white-space:nowrap}
+.pickrow .pl{font-size:9.5px;color:var(--muted2);flex:1;min-width:24px;white-space:nowrap}
 .pickrow .pin{display:flex;align-items:center;gap:3px;font-size:9px;color:var(--muted);flex:0 0 auto}
 .pickrow .plot,.pickrow .pos{width:46px;background:var(--panel);border:1px solid var(--line2);color:var(--ink);padding:5px 5px;border-radius:4px;font-size:12px;font-family:inherit;text-align:right}
+.pickrow .pq{width:74px;background:var(--panel);border:1px solid var(--line2);color:var(--ink);padding:5px 5px;border-radius:4px;font-size:12px;font-family:inherit;text-align:right}
 table.alot td.hl{background:var(--accentBg);color:var(--accent);font-weight:800}
 table.alot{width:100%;border-collapse:collapse;font-size:12px}
 table.alot th,table.alot td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:right;font-family:'JetBrains Mono','SF Mono','Consolas',ui-monospace,monospace;font-variant-numeric:tabular-nums}
@@ -203,14 +203,13 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--line);color:v
     <h3 style="font-size:14.5px;font-weight:700;margin-bottom:3px">Kalkulator Modal &amp; Penjatahan Multi-Emiten</h3>
     <p style="color:var(--muted);font-size:12px;margin-bottom:6px">Centang emiten yang ingin Anda ikuti, isi jumlah lot, lalu pilih kondisi penjatahan. Hasil: <b>dana fix yang wajib tersedia di RDN</b> + estimasi jatah &amp; refund mengikuti SEOJK No.25/2025.</p>
     <div id="allotPick" class="pickgrid"></div>
-    <p style="color:var(--muted);font-size:11px;margin:2px 0 0">Atur <b>OS×</b> (tingkat oversubscribe) per emiten — biarkan <b>1</b> untuk kondisi normal. Mis. EMMI 50× sedang ramai, BACH 1× normal.</p>
+    <p style="color:var(--muted);font-size:11px;margin:2px 0 0">Per emiten atur <b>OS×</b> (tingkat oversubscribe; <b>1</b> = normal) &amp; <b>antrian</b> (jumlah pemesan ritel). <b>Penentu utama jatah ≤100 jt adalah antrian, bukan OS×</b> (OS× hanya menaikkan % pool &amp; jatah &gt;100 jt). IPO populer: antrian 300rb–1jt; IPO kecil: 30rb–150rb.</p>
     <div class="calc-row" style="margin-top:8px">
       <div><label>Skenario harga</label><select id="aHarga"><option value="low">Batas bawah</option><option value="high" selected>Batas atas</option></select></div>
       <div><label>Hitung jatah utk</label><select id="aClass"><option value="ritel" selected>Ritel ≤Rp100 jt</option><option value="besar">Besar &gt;Rp100 jt</option></select></div>
-      <div><label>Estimasi antrian (pemesan ritel)</label><input type="number" id="aQueue" value="500000" step="50000" min="1" style="width:130px"></div>
     </div>
     <div id="allotOut" style="margin-top:14px"></div>
-    <p style="color:var(--muted);font-size:10.5px;margin-top:12px">Dana <b>wajib tersedia penuh</b> di RDN saat memesan — itulah "harga fix"; sisa di-refund bila tak penuh terisi. Penjatahan terpusat dibagi rasio <b>1:1</b>: jatah <b>≤Rp100 jt (ritel)</b> disebar rata = pool ritel ÷ jumlah antrian (maks sebesar pesanan), jadi ritel tetap kebagian walau oversubscribe ekstrem (mis. WBSA 386× → ±3 lot); jatah <b>&gt;Rp100 jt</b> proporsional ≈ pesanan ÷ OS×. Estimasi; realisasi pakai penjatahan resmi e-IPO. Fee ~0,15%, belum termasuk pajak.</p>
+    <p style="color:var(--muted);font-size:10.5px;margin-top:12px">Dana <b>wajib tersedia penuh</b> di RDN saat memesan — itulah "harga fix"; sisa di-refund. Penjatahan terpusat 1:1: jatah <b>≤Rp100 jt</b> = pool ritel ÷ antrian (maks sebesar pesanan), rata-rata; bila pool &lt; antrian → undian (banyak yang 0). Jatah ditentukan <b>besar pool vs jumlah antrian</b>, bukan OS×. Mis. WBSA pool ritel 1,8 jt lot ÷ ~600rb antrian → ±3 lot; emiten beremisi kecil pool-nya kecil, jadi jatah ikut kecil kalau antrian banyak. Jatah <b>&gt;Rp100 jt</b> = proporsional ≈ pesanan ÷ OS×. Estimasi; realisasi pakai penjatahan resmi e-IPO. Fee ~0,15%.</p>
   </div>
   <div class="grid g2">
     <div class="calc">
@@ -467,37 +466,39 @@ const ALLOT_TIERS={'I':{base:20,adj:[22.5,25,30]},'II':{base:15,adj:[17.5,20,25]
 function golOf(m){return m<=100?'I':m<=250?'II':m<=500?'III':m<=1000?'IV':'V';}
 function tierIdx(X){return X<2.5?-1:X<10?0:X<25?1:2;}
 const allotPick=document.getElementById('allotPick');
-ORDER.forEach(k=>{const e=E[k];allotPick.innerHTML+=`<label class="pickrow" id="pk_${k}"><input type="checkbox" data-k="${k}" checked><span class="pc" style="color:${e.color}">${e.code}</span><span class="pl">G${golOf(e.raise)}</span><span class="pin">lot<input type="number" class="plot" data-k="${k}" value="5" min="0"></span><span class="pin">OS×<input type="number" class="pos" data-k="${k}" value="1" min="1" step="1"></span></label>`;});
+ORDER.forEach(k=>{const e=E[k];allotPick.innerHTML+=`<label class="pickrow" id="pk_${k}"><input type="checkbox" data-k="${k}" checked><span class="pc" style="color:${e.color}">${e.code}</span><span class="pl">G${golOf(e.raise)}</span><span class="pin">lot<input type="number" class="plot" data-k="${k}" value="5" min="0"></span><span class="pin">OS×<input type="number" class="pos" data-k="${k}" value="1" min="1" step="1"></span><span class="pin">antrian<input type="number" class="pq" data-k="${k}" value="200000" min="1" step="10000"></span></label>`;});
 function offeredLot(e){return Math.round(e.raise*1e7/e.high);}
+function fmtLot(v){return v>=1e6?(v/1e6).toFixed(2)+'jt':Math.round(v/1e3)+'rb';}
 function runAllot(){
- const hi=document.getElementById('aHarga').value==='high';const klass=document.getElementById('aClass').value;const antrian=Math.max(1,+document.getElementById('aQueue').value||1);
+ const hi=document.getElementById('aHarga').value==='high';const klass=document.getElementById('aClass').value;
  let rows='',tDana=0,tPakai=0,tRefund=0,n=0,anyOS=false;
  ORDER.forEach(k=>{const cb=document.querySelector(`input[type=checkbox][data-k="${k}"]`);const row=document.getElementById('pk_'+k);
   if(!cb.checked){row.classList.add('off');return;}row.classList.remove('off');
   const lot=Math.max(0,+document.querySelector(`.plot[data-k="${k}"]`).value||0);if(lot<=0)return;
   const OS=Math.max(1,+document.querySelector(`.pos[data-k="${k}"]`).value||1);if(OS>1)anyOS=true;
+  const antrian=Math.max(1,+document.querySelector(`.pq[data-k="${k}"]`).value||1);
   const e=E[k];const P=hi?e.high:e.low;const pokok=P*lot*100;const fee=pokok*0.0015;const dana=pokok+fee;
   const gol=golOf(e.raise);const ti=tierIdx(OS);const pool=OS<=1?ALLOT_TIERS[gol].base:(ti<0?ALLOT_TIERS[gol].base:ALLOT_TIERS[gol].adj[ti]);
-  const ritelPool=offeredLot(e)*pool/100*0.5;
+  const ritelPool=Math.round(offeredLot(e)*pool/100*0.5);
   const jR=OS<=1?lot:Math.min(lot,Math.floor(ritelPool/antrian));
   const jB=OS<=1?lot:Math.floor(lot/OS);
   const lab=v=>OS<=1?lot:(v<1?'~0–1':v);
   const jUsed=klass==='ritel'?jR:jB;const pakai=jUsed*P*100*1.0015;const refund=Math.max(0,dana-pakai);
   tDana+=dana;tPakai+=pakai;tRefund+=refund;n++;
-  rows+=`<tr><td class="l"><b style="color:${e.color}">${e.code}</b> <span style="color:var(--muted2);font-size:9.5px">G${gol}</span></td><td>${lot}</td><td>Rp${P}</td><td>${rp(dana)}</td><td>${OS<=1?'—':pool+'%'}</td><td>${OS<=1?'1×':OS+'×'}</td><td class="${klass==='ritel'?'hl':''}">${lab(jR)}</td><td class="${klass==='besar'?'hl':''}">${lab(jB)}</td></tr>`;});
+  rows+=`<tr><td class="l"><b style="color:${e.color}">${e.code}</b> <span style="color:var(--muted2);font-size:9.5px">G${gol}</span></td><td>${lot}</td><td>Rp${P}</td><td>${rp(dana)}</td><td>${OS<=1?'—':pool+'%'}</td><td>${OS<=1?'—':fmtLot(ritelPool)}</td><td class="${klass==='ritel'?'hl':''}">${lab(jR)}</td><td class="${klass==='besar'?'hl':''}">${lab(jB)}</td></tr>`;});
  const out=document.getElementById('allotOut');
  if(!n){out.innerHTML=`<p style="color:var(--muted);font-size:12.5px">Centang minimal satu emiten &amp; isi jumlah lot (&gt;0).</p>`;return;}
  out.innerHTML=`<div style="overflow-x:auto"><table class="alot">
-   <tr><th class="l">Emiten</th><th>Lot</th><th>Harga</th><th>Dana RDN</th><th>Pool%</th><th>OS×</th><th>Jatah ≤100jt</th><th>Jatah &gt;100jt</th></tr>${rows}
+   <tr><th class="l">Emiten</th><th>Lot</th><th>Harga</th><th>Dana RDN</th><th>Pool%</th><th>Pool ritel</th><th>Jatah ≤100jt</th><th>Jatah &gt;100jt</th></tr>${rows}
    <tr class="tot"><td class="l">TOTAL · ${n}</td><td></td><td></td><td>${rp(tDana)}</td><td></td><td></td><td></td><td></td></tr></table></div>
   <div class="bigres" style="margin-top:12px">
    <div class="r"><div class="lbl">Hitung utk</div><div class="val" style="font-size:12.5px">${klass==='ritel'?'Ritel ≤Rp100 jt':'Besar >Rp100 jt'}</div></div>
    <div class="r"><div class="lbl">HARGA FIX di RDN</div><div class="val" style="color:var(--up)">${rp(tDana)}</div></div>
    <div class="r"><div class="lbl">Est. dana terpakai</div><div class="val">${rp(tPakai)}</div></div>
    <div class="r"><div class="lbl">Est. refund</div><div class="val" style="color:var(--accent)">${rp(tRefund)}</div></div></div>
-  ${anyOS?`<p style="font-size:10.5px;color:var(--muted);margin-top:8px">Jatah <b>≤100 jt</b> = pool ritel ÷ ${antrian.toLocaleString('id')} antrian (maks sebesar pesanan); <b>&gt;100 jt</b> = pesanan ÷ OS×. Kolom tersorot = kelas yang dipakai untuk hitung refund.</p>`:`<p style="font-size:10.5px;color:var(--muted);margin-top:8px">Semua emiten OS× = 1 (normal) → jatah penuh, refund 0.</p>`}`;}
+  ${anyOS?`<p style="font-size:10.5px;color:var(--muted);margin-top:8px">Jatah <b>≤100 jt</b> = pool ritel ÷ antrian emiten itu (rata-rata; bila pool &lt; antrian → undian, sebagian dapat 0). <b>&gt;100 jt</b> = pesanan ÷ OS×. Kolom tersorot = kelas untuk hitung refund.</p>`:`<p style="font-size:10.5px;color:var(--muted);margin-top:8px">Semua emiten OS× = 1 (normal) → jatah penuh, refund 0.</p>`}`;}
 document.getElementById('allotPick').addEventListener('input',runAllot);
-['aHarga','aClass','aQueue'].forEach(id=>document.getElementById(id).addEventListener('input',runAllot));
+['aHarga','aClass'].forEach(id=>document.getElementById(id).addEventListener('input',runAllot));
 runAllot();
 
 function runBudget(){const b=+document.getElementById('budget').value||0;let h='';
