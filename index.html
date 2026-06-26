@@ -160,8 +160,8 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--line);color:v
 .qbar .qt{flex:1;height:22px;background:var(--bg2);border-radius:3px;overflow:hidden}
 .qbar .qt i{display:block;height:100%;border-radius:3px;box-shadow:0 0 14px -2px currentColor}
 .qbar .qv{width:84px;text-align:right;font-weight:800;flex:0 0 auto}
-.qbar .qj{width:124px;text-align:right;font-size:10.5px;color:var(--muted);flex:0 0 auto}
-@media(max-width:620px){.qbar .qj{display:none}.qbar .qv{width:70px}}
+.qbar .qj{width:150px;text-align:right;font-size:11px;color:var(--muted);flex:0 0 auto;line-height:1.25}
+@media(max-width:620px){.qbar .qj{width:96px}.qbar .qv{width:64px}}
 .v,.val,.amt,.kpi .val,.scenario td,table.cmp td:not(.metric),.spend .amt{font-family:'JetBrains Mono','SF Mono','Consolas',ui-monospace,monospace;font-variant-numeric:tabular-nums}
 </style>
 </head>
@@ -212,9 +212,9 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--line);color:v
       <h3 style="font-size:14.5px;font-weight:700;margin:0">Antrian IPO Terbaru — Minat Pemesan</h3>
       <span class="statuschip" style="color:var(--accent);background:var(--accentBg)"><i style="background:var(--accent)"></i>Per 25 Juni 2026 · Sore</span>
     </div>
-    <p style="color:var(--muted);font-size:12px;margin-bottom:12px">Jumlah pemesan ritel di e-IPO (makin tinggi = makin laris, tapi <b>jatah per orang makin kecil</b>). Estimasi jatah bila ramai = pool ritel basis SEOJK ÷ antrian.</p>
+    <p style="color:var(--muted);font-size:12px;margin-bottom:12px">Jumlah pemesan ritel di e-IPO (makin tinggi = makin laris, tapi <b>jatah per orang makin kecil</b>). Angka <b style="color:var(--ink)">lot</b> = perkiraan penjatahan ritel dari <b>tabel referensi</b> (sesuai antrian saat ini); <b>"rumus"</b> = estimasi konservatif basis pool SEOJK (skenario terburuk).</p>
     <div id="antrianRank"></div>
-    <p style="color:var(--muted);font-size:10.5px;margin-top:10px">Sumber: pantauan antrian e-IPO per 25 Juni 2026. Angka berubah harian sampai penutupan masa penawaran; "≈ lot/pemesan" adalah perkiraan saat oversubscribe, bukan jaminan.</p>
+    <p style="color:var(--muted);font-size:10.5px;margin-top:10px">Sumber antrian: pantauan e-IPO per 25 Juni 2026; tabel penjatahan: kurasi referensi. Angka berubah harian sampai penutupan masa penawaran — perkiraan, bukan jaminan.</p>
   </div>
   <div class="grid g3" id="costCards" style="margin-bottom:18px"></div>
   <div class="calc" style="margin-bottom:12px">
@@ -488,6 +488,16 @@ ORDER.forEach(k=>{const e=E[k];cc.innerHTML+=`<div class="card">
 
 /* ALLOTMENT — SEOJK No.25/SEOJK.04/2025 */
 const ALLOT_TIERS={'I':{base:20,adj:[22.5,25,30]},'II':{base:15,adj:[17.5,20,25]},'III':{base:10,adj:[12.5,15,20]},'IV':{base:7.5,adj:[10,12.5,17.5]},'V':{base:2.5,adj:[5,7.5,12.5]}};
+/* TABEL REFERENSI PERKIRAAN PENJATAHAN RITEL (per antrian) — sumber: kurasi SahamInside */
+const ALLOT_REF={
+ JELI:[[175000,'5–8'],[350000,'3–5'],[650000,'2–3'],[Infinity,'1–2']],
+ RANS:[[350000,'5–6'],[550000,'4–5'],[750000,'2–3'],[Infinity,'1–2']],
+ BACH:[[350000,'2–3'],[Infinity,'1–2']],
+ JECX:[[350000,'2–3'],[Infinity,'1–2']],
+ EMMI:[[350000,'2–3'],[Infinity,'1–2']],
+ PRDL:[[350000,'2–3'],[Infinity,'1–2']],
+};
+function refLot(k,antrian){const t=ALLOT_REF[k];if(!t)return '—';for(const r of t){if(antrian<=r[0])return r[1];}return t[t.length-1][1];}
 function golOf(m){return m<=100?'I':m<=250?'II':m<=500?'III':m<=1000?'IV':'V';}
 function tierIdx(X){return X<2.5?-1:X<10?0:X<25?1:2;}
 const allotPick=document.getElementById('allotPick');
@@ -511,23 +521,24 @@ function runAllot(){
   const P=hi?e.high:e.low;const pokok=P*lot*100;const fee=pokok*0.0015;const dana=pokok+fee;
   const gol=golOf(e.raise);const ti=tierIdx(OS);const pool=OS<=1?ALLOT_TIERS[gol].base:(ti<0?ALLOT_TIERS[gol].base:ALLOT_TIERS[gol].adj[ti]);
   const ritelPool=Math.round(offeredLot(e)*pool/100*0.5);
-  const jR=OS<=1?lot:Math.min(lot,Math.floor(ritelPool/antrian));
   const jB=OS<=1?lot:Math.floor(lot/OS);
   const lab=v=>OS<=1?lot:(v<1?'~0–1':v);
-  const jUsed=klass==='ritel'?jR:jB;const pakai=jUsed*P*100*1.0015;const refund=Math.max(0,dana-pakai);
+  const consLot=Math.floor(offeredLot(e)*ALLOT_TIERS[gol].base/100*0.5/antrian);const consLab=consLot>=1?consLot+' lot':'undian';
+  const ref=refLot(k,antrian);const refLo=Math.min(lot,parseInt(ref,10)||1);
+  const jUsed=klass==='ritel'?refLo:jB;const pakai=jUsed*P*100*1.0015;const refund=Math.max(0,dana-pakai);
   tDana+=dana;tPakai+=pakai;tRefund+=refund;n++;
-  rows+=`<tr><td class="l"><b style="color:${e.color}">${e.code}</b> <span style="color:var(--muted2);font-size:9.5px">G${gol}</span></td><td>${lot}</td><td>Rp${P}</td><td>${rp(dana)}</td><td>${OS<=1?'—':pool+'%'}</td><td>${OS<=1?'—':fmtLot(ritelPool)}</td><td class="${klass==='ritel'?'hl':''}">${lab(jR)}</td><td class="${klass==='besar'?'hl':''}">${lab(jB)}</td></tr>`;});
+  rows+=`<tr><td class="l"><b style="color:${e.color}">${e.code}</b> <span style="color:var(--muted2);font-size:9.5px">G${gol}</span></td><td>${lot}</td><td>Rp${P}</td><td>${rp(dana)}</td><td>${OS<=1?'—':pool+'%'}</td><td>${OS<=1?'—':fmtLot(ritelPool)}</td><td class="${klass==='ritel'?'hl':''}"><b>${ref}</b></td><td style="color:var(--muted)">${consLab}</td><td class="${klass==='besar'?'hl':''}">${lab(jB)}</td></tr>`;});
  const out=document.getElementById('allotOut');
  if(!n){out.innerHTML=`<p style="color:var(--muted);font-size:12.5px">Centang minimal satu emiten &amp; isi jumlah lot (&gt;0).</p>`;return;}
  out.innerHTML=`<div style="overflow-x:auto"><table class="alot">
-   <tr><th class="l">Emiten</th><th>Lot</th><th>Harga</th><th>Dana RDN</th><th>Pool%</th><th>Pool ritel</th><th>Jatah ≤100jt</th><th>Jatah &gt;100jt</th></tr>${rows}
-   <tr class="tot"><td class="l">TOTAL · ${n}</td><td></td><td></td><td>${rp(tDana)}</td><td></td><td></td><td></td><td></td></tr></table></div>
+   <tr><th class="l">Emiten</th><th>Lot</th><th>Harga</th><th>Dana RDN</th><th>Pool%</th><th>Pool ritel</th><th>Jatah tabel</th><th>Jatah rumus</th><th>Jatah &gt;100jt</th></tr>${rows}
+   <tr class="tot"><td class="l">TOTAL · ${n}</td><td></td><td></td><td>${rp(tDana)}</td><td></td><td></td><td></td><td></td><td></td></tr></table></div>
   <div class="bigres" style="margin-top:12px">
    <div class="r"><div class="lbl">Hitung utk</div><div class="val" style="font-size:12.5px">${klass==='ritel'?'Ritel ≤Rp100 jt':'Besar >Rp100 jt'}</div></div>
    <div class="r"><div class="lbl">HARGA FIX di RDN</div><div class="val" style="color:var(--up)">${rp(tDana)}</div></div>
    <div class="r"><div class="lbl">Est. dana terpakai</div><div class="val">${rp(tPakai)}</div></div>
    <div class="r"><div class="lbl">Est. refund</div><div class="val" style="color:var(--accent)">${rp(tRefund)}</div></div></div>
-  ${anyOS?`<p style="font-size:10.5px;color:var(--muted);margin-top:8px">Jatah <b>≤100 jt</b> = pool ritel ÷ antrian emiten itu (rata-rata; bila pool &lt; antrian → undian, sebagian dapat 0). <b>&gt;100 jt</b> = pesanan ÷ OS×. Kolom tersorot = kelas untuk hitung refund.${autoOS?` OS× di-estimasi dari antrian × asumsi ${avgLot} lot/pemesan.`:''}</p>`:`<p style="font-size:10.5px;color:var(--muted);margin-top:8px">OS× = 1 (tidak oversubscribe) → jatah penuh, refund 0.${autoOS?` Estimasi OS× dari antrian × ${avgLot} lot/pemesan; naikkan asumsi bila pesanan dinilai lebih besar.`:''}</p>`}
+  <p style="font-size:10.5px;color:var(--muted);margin-top:8px"><b style="color:var(--ink)">Jatah tabel</b> = perkiraan penjatahan ritel dari tabel referensi sesuai antrian (basis dana terpakai &amp; refund kelas ritel). <b>Jatah rumus</b> = estimasi konservatif pool SEOJK ÷ antrian (skenario terburuk, bisa "undian"). <b>&gt;100 jt</b> = pesanan ÷ OS×.${autoOS?` OS× di-estimasi dari antrian × asumsi ${avgLot} lot/pemesan.`:''}</p>
   ${viol.length?`<div class="note" style="margin:10px 0 0;border-left-color:var(--down)"><b style="color:var(--down)">Batas pesanan:</b> ${viol.join(' · ')}. Maks 1 investor = 10% nilai emisi (SEOJK).</div>`:''}`;}
 document.getElementById('allotPick').addEventListener('input',ev=>{const t=ev.target;if(t&&t.classList&&(t.classList.contains('pq')||t.classList.contains('plot')))formatThousandsInput(t);runAllot();});
 ['aHarga','aClass','aAuto','aAvg'].forEach(id=>document.getElementById(id).addEventListener('input',runAllot));
@@ -538,8 +549,8 @@ function basePoolOf(e){return ALLOT_TIERS[golOf(e.raise)].base;}
 function jatahRamai(e){const ritelPool=offeredLot(e)*basePoolOf(e)/100*0.5;return Math.floor(ritelPool/e.antrian);}
 (function(){const arr=[...ORDER].sort((a,b)=>E[b].antrian-E[a].antrian);const mx=E[arr[0]].antrian;let h='';
  arr.forEach((k,i)=>{const e=E[k];const pct=Math.max(6,e.antrian/mx*100);const j=jatahRamai(e);
-  const jl=j>=1?`≈ ${j} lot/pemesan`:`undian · ≈0–1 lot`;
-  h+=`<div class="qbar"><span class="qr">${i+1}</span><span class="qc" style="color:${e.color}">${e.code}</span><div class="qt"><i style="width:${pct}%;background:${e.color};color:${e.color}"></i></div><span class="qv mono" style="color:${e.color}">${fmtNum(e.antrian)}</span><span class="qj">${jl}</span></div>`;});
+  const cons=j>=1?`${j} lot`:`undian`;
+  h+=`<div class="qbar"><span class="qr">${i+1}</span><span class="qc" style="color:${e.color}">${e.code}</span><div class="qt"><i style="width:${pct}%;background:${e.color};color:${e.color}"></i></div><span class="qv mono" style="color:${e.color}">${fmtNum(e.antrian)}</span><span class="qj"><b style="color:var(--ink)">${refLot(k,e.antrian)} lot</b><span style="color:var(--muted2);font-size:9px"> · rumus ${cons}</span></span></div>`;});
  document.getElementById('antrianRank').innerHTML=h;})();
 
 function runBudget(){const b=parseNum(document.getElementById('budget').value);let h='';
