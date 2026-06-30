@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IPO Terminal · Galeri Prototipe UI/UX</title>
+<style>
+:root{
+  --bg:#070a11;--bg2:#0b1019;--panel:#0e1422;--panel2:#131b2c;--line:#1c2638;--line2:#2a3850;
+  --ink:#e6edf7;--ink2:#aab6c8;--muted:#6f7d95;--muted2:#4c5a72;
+  --accent:#3dd7e6;--accentBg:#08303a;--up:#19d98a;--down:#ff5c78;--amber:#ffb547;--violet:#a585ff;
+  --EMMI:#3b9dff;--BACH:#19d98a;--JECX:#a585ff;--PRDL:#ffa033;--JELI:#3dd7e6;--RANS:#ff5e8a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:
+  radial-gradient(1200px 600px at 80% -10%,rgba(61,215,230,.07),transparent),
+  radial-gradient(900px 500px at 0% 0%,rgba(165,133,255,.06),transparent),var(--bg);
+  color:var(--ink);line-height:1.5;font-size:14.5px;-webkit-font-smoothing:antialiased;min-height:100vh}
+.mono{font-family:'JetBrains Mono','SF Mono','Consolas',ui-monospace,monospace;font-variant-numeric:tabular-nums}
+.wrap{max-width:1180px;margin:0 auto;padding:0 18px 120px}
+a{color:var(--accent);text-decoration:none}
+/* HEADER */
+header{padding:26px 0 8px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:42px;height:42px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--violet));display:flex;align-items:center;justify-content:center;font-weight:900;color:#04121a;font-size:18px;box-shadow:0 6px 22px rgba(61,215,230,.25)}
+.brand h1{font-size:20px;font-weight:800;letter-spacing:.01em}
+.brand .t2{font-size:11px;color:var(--muted);letter-spacing:.18em;text-transform:uppercase;margin-top:2px}
+.lead{color:var(--ink2);max-width:760px;font-size:13.5px;margin-top:14px}
+.lead b{color:var(--ink)}
+/* NAV */
+nav.concepts{display:flex;gap:8px;overflow-x:auto;padding:18px 0 6px;scrollbar-width:thin;position:sticky;top:0;z-index:30;background:linear-gradient(var(--bg),var(--bg) 70%,transparent)}
+nav.concepts::-webkit-scrollbar{height:6px}nav.concepts::-webkit-scrollbar-thumb{background:var(--line2);border-radius:6px}
+.pill{flex:0 0 auto;display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);color:var(--ink2);
+  padding:9px 14px;border-radius:30px;font-size:12.5px;font-weight:600;cursor:pointer;transition:.15s;white-space:nowrap}
+.pill:hover{border-color:var(--line2);color:var(--ink)}
+.pill.on{background:var(--accentBg);border-color:var(--accent);color:var(--accent)}
+.pill .num{font-weight:800;opacity:.7}
+/* STAGE */
+.stage{margin-top:14px;animation:fade .35s}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.shead{display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap;margin-bottom:4px}
+.shead .meta{flex:1;min-width:240px}
+.tagrow{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:7px}
+.tg{font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:3px 9px;border-radius:20px;background:var(--panel2);color:var(--muted);border:1px solid var(--line)}
+.tg.ux{color:var(--accent);border-color:var(--accentBg)}.tg.ui{color:var(--violet)}
+.shead h2{font-size:22px;font-weight:800}
+.shead p.d{color:var(--ink2);font-size:13.5px;margin-top:4px;max-width:720px}
+.like{flex:0 0 auto;display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);color:var(--ink2);
+  padding:9px 14px;border-radius:10px;font-size:12.5px;font-weight:700;cursor:pointer;transition:.15s}
+.like:hover{border-color:var(--down)}
+.like.on{background:rgba(255,92,120,.12);border-color:var(--down);color:var(--down)}
+.like .h{font-size:16px;line-height:1}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}
+.grid{display:grid;gap:14px}
+.note{background:var(--panel2);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:11px 14px;font-size:12.5px;color:var(--ink2);margin-top:14px}
+.muted{color:var(--muted)}.up{color:var(--up)}.down{color:var(--down)}.amber{color:var(--amber)}
+.btn{display:inline-flex;align-items:center;gap:7px;background:var(--accentBg);border:1px solid var(--accent);color:var(--accent);
+  padding:9px 15px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:.15s}
+.btn:hover{filter:brightness(1.15)}
+.btn.ghost{background:var(--panel);border-color:var(--line2);color:var(--ink2)}
+.seg{display:inline-flex;background:var(--panel2);border:1px solid var(--line2);border-radius:10px;overflow:hidden}
+.seg button{background:none;border:none;color:var(--muted);padding:10px 18px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:7px;transition:.15s}
+.seg button.on{background:var(--accentBg);color:var(--accent)}
+.chip{display:inline-flex;align-items:center;gap:6px;background:var(--panel2);border:1px solid var(--line2);color:var(--ink2);
+  padding:9px 14px;border-radius:24px;font-size:12.5px;font-weight:600;cursor:pointer;transition:.15s}
+.chip:hover{border-color:var(--accent)}
+.chip.on{background:var(--accentBg);border-color:var(--accent);color:var(--accent)}
+.bar{height:8px;border-radius:6px;background:var(--bg2);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:6px}
+.dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex:0 0 auto}
+/* favorites bar */
+.favbar{position:fixed;left:0;right:0;bottom:0;z-index:40;background:rgba(8,12,20,.92);backdrop-filter:blur(8px);
+  border-top:1px solid var(--line2);padding:11px 18px}
+.favbar .in{max-width:1180px;margin:0 auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:12.5px}
+.favbar b{color:var(--ink)}
+.favpill{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:rgba(255,92,120,.14);color:var(--down);border:1px solid rgba(255,92,120,.4)}
+table.t{width:100%;border-collapse:collapse;font-size:12.5px}
+table.t th,table.t td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:right}
+table.t th{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.05em;font-weight:700}
+table.t td.l,table.t th.l{text-align:left}
+.tip{position:fixed;pointer-events:none;background:var(--panel2);border:1px solid var(--line2);border-radius:9px;padding:9px 12px;font-size:12px;
+  box-shadow:0 12px 30px rgba(0,0,0,.5);opacity:0;transition:opacity .12s;z-index:50;max-width:230px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="brand"><div class="logo">IP</div><div><h1>IPO Terminal — Galeri Prototipe</h1><div class="t2">Eksplorasi arah UI / UX · BEI 2026</div></div></div>
+  <p class="lead">Tujuh konsep <b>interaktif</b> dengan data asli 6 emiten. Coba klik-klik tiap konsep, lalu tekan <b>♥ Tandai suka</b> pada yang Anda minati — pilihan Anda terkumpul di bar bawah. Cukup sebutkan nomornya nanti, dan saya kembangkan jadi desain penuh.</p>
+</header>
+<nav class="concepts" id="nav"></nav>
+<div class="stage" id="stage"></div>
+</div>
+<div class="favbar" id="favbar"><div class="in"><span class="muted">Pilihan kamu:</span> <span id="favlist" class="muted">belum ada — klik ♥ pada konsep favorit</span></div></div>
+<div class="tip" id="tip"></div>
+
+<script>
+/* ===================== DATA ===================== */
+const DIMS=['Valuasi','Fundamental','Neraca','Moat','ARA','Risiko','Likuiditas'];
+const WT=[1,0.8,0.5,0.5,2.2,0.8,1.6], WI=[1.8,2,1.6,1.8,0.3,1.4,0.8];
+const E=[
+ {k:'EMMI',name:'Esa Medika Mandiri',sec:'Distribusi alkes & farmasi',color:'#3b9dff',price:'446–515',plo:446,phi:515,fix:0,per:24.6,pbv:2.12,mcap:898,roe:9.0,der:2.89,nm:7.5,div:30,araDay1:50,araNorm:25,listing:'8 Jul',day:8,os:35,sc:[3,4,2,2,3,2.5,3],tag:'Pertumbuhan, utang berat'},
+ {k:'BACH',name:'Bach Multi Global',sec:'Genset + infra telekomunikasi',color:'#19d98a',price:'400–500',plo:400,phi:500,fix:0,per:11.8,pbv:2.26,mcap:2042,roe:19.9,der:1.30,nm:9.0,div:50,araDay1:50,araNorm:25,listing:'7 Jul',day:7,os:70,sc:[5,5,3,3,3,3,3.5],tag:'Termurah + tumbuh'},
+ {k:'JECX',name:'Nitrasanata Dharma (JEC)',sec:'RS & klinik mata',color:'#a585ff',price:'1.250',plo:1250,phi:1250,fix:1,per:56.1,pbv:3.41,mcap:4067,roe:6.0,der:0.79,nm:7.8,div:50,araDay1:50,araNorm:25,listing:'7 Jul',day:7,os:25,sc:[1.5,2,5,5,2,3.5,4],tag:'Brand kuat, mahal'},
+ {k:'PRDL',name:'Prodia Diagnostic Line',sec:'Manufaktur alkes diagnostik',color:'#ffa033',price:'120',plo:120,phi:120,fix:1,per:12.3,pbv:1.43,mcap:209,roe:12.6,der:1.34,nm:22.8,div:20,araDay1:70,araNorm:35,listing:'Q3',day:0,os:200,sc:[5,2,3,3,5,2,2],tag:'Gocap, paling liar'},
+ {k:'JELI',name:'Niramas Utama (Inaco)',sec:'Nata de coco, jelly, gummy',color:'#3dd7e6',price:'900',plo:900,phi:900,fix:1,per:31.1,pbv:2.64,mcap:1215,roe:8.5,der:2.79,nm:5.2,div:30,araDay1:50,araNorm:25,listing:'7 Jul',day:7,os:45,sc:[2.5,3,2,4,2.5,2.5,3.5],tag:'Brand konsumen'},
+ {k:'RANS',name:'Rans Entertainmen',sec:'Media & hiburan (Raffi/Nagita)',color:'#ff5e8a',price:'135–170',plo:135,phi:170,fix:0,per:33.9,pbv:2.64,mcap:2144,roe:7.4,der:0.35,nm:16.0,div:35,araDay1:70,araNorm:35,listing:'10 Jul',day:10,os:150,sc:[2,2.5,4.5,3.5,3.5,2.5,4],tag:'Hype, neraca sehat'},
+];
+function wscore(sc,W){let s=0,t=0;for(let i=0;i<7;i++){s+=sc[i]*W[i];t+=5*W[i];}return Math.round(s/t*100);}
+E.forEach(e=>{e.trader=wscore(e.sc,WT);e.investor=wscore(e.sc,WI);});
+const rp=n=>'Rp'+Math.round(n).toLocaleString('id');
+const byK=k=>E.find(e=>e.k===k);
+function araSeq(e,n){let p=e.phi,a=[p];p*=1+e.araDay1/100;a.push(Math.round(p));for(let i=0;i<(n||3);i++){p*=1+e.araNorm/100;a.push(Math.round(p));}return a;}
+
+/* ===================== FAVORITES ===================== */
+const liked=new Set();
+function toggleLike(id,nm){liked.has(id)?liked.delete(id):liked.add(id);renderFav();render();}
+function renderFav(){const el=document.getElementById('favlist');
+ if(!liked.size){el.innerHTML='belum ada — klik ♥ pada konsep favorit';el.className='muted';return;}
+ el.className='';el.innerHTML=[...liked].sort().map(id=>{const c=CONCEPTS.find(x=>x.id===id);return `<span class="favpill">${c.n}. ${c.t}</span>`;}).join(' ');}
+
+/* ===================== TOOLTIP ===================== */
+const tip=document.getElementById('tip');
+function showTip(html,x,y){tip.innerHTML=html;tip.style.opacity=1;tip.style.left=Math.min(x+14,innerWidth-240)+'px';tip.style.top=(y+14)+'px';}
+function hideTip(){tip.style.opacity=0;}
+
+/* ===================== CONCEPTS ===================== */
+const CONCEPTS=[
+{id:'persona',n:'01',t:'Persona Home',tags:['UX','Layout'],
+ d:'Toggle Trader vs Investor di paling atas — seluruh beranda menyusun ulang & menonjolkan metrik berbeda. Pakai skor yang sudah ada.',
+ render:renderPersona},
+{id:'wizard',n:'02',t:'Decision Wizard',tags:['UX','Alur'],
+ d:'Wizard 3 langkah (budget → horizon → risiko). Output: shortlist + saran lot dalam budget + dana yang disiapkan. Analisis jadi aksi.',
+ render:renderWizard},
+{id:'cards',n:'03',t:'3 Varian Kartu Emiten',tags:['UI','Komponen'],
+ d:'Tiga gaya kartu untuk emiten yang sama: Terminal padat, Konsumen bersih, dan Sparkline-forward. Pilih bahasa kartunya.',
+ render:renderCards},
+{id:'map',n:'04',t:'Peta Valuasi Interaktif',tags:['UI','Data-viz'],
+ d:'Scatter PER × PBV, ukuran gelembung = kapitalisasi. Zona kiri-bawah = murah. Hover untuk detail, klik untuk pilih.',
+ render:renderMap},
+{id:'heat',n:'05',t:'Heatmap Perbandingan',tags:['UI','Data-viz'],
+ d:'Tabel banding dengan intensitas warna per baris (hijau = terbaik). Ganti sudut pandang trader/investor untuk menyorot baris relevan.',
+ render:renderHeat},
+{id:'calendar',n:'06',t:'Kalender & Hitung Mundur',tags:['UX','Waktu'],
+ d:'Lini masa Juli 2026 yang memvisualkan tabrakan jadwal listing + hitung mundur. Sparkline skenario ARA tertanam.',
+ render:renderCalendar},
+{id:'theme',n:'07',t:'Arah Visual / Tema',tags:['UI','Branding'],
+ d:'Kartu yang sama dalam 3 bahasa visual: Terminal gelap, Fintech terang, dan Neo-brutalist. Pilih mood produknya.',
+ render:renderTheme},
+];
+
+/* ---- 01 PERSONA ---- */
+let personaMode='trader';
+function renderPersona(){
+ const sorted=[...E].sort((a,b)=>b[personaMode]-a[personaMode]);
+ const isT=personaMode==='trader';
+ const rows=sorted.map((e,i)=>{const sc=e[personaMode];
+  const m1=isT?['ARA hari-1',e.araDay1+'%']:['PER',e.per+'x'];
+  const m2=isT?['Likuiditas',['Rendah','Sedang','Tinggi','Tinggi'][Math.min(3,Math.round(e.sc[6])-2)]||'Sedang']:['ROE',e.roe+'%'];
+  const m3=isT?['Modal 1 lot',rp(e.phi*100)]:['DER',e.der+'x'];
+  const why=isT?(e.araDay1>=70?'Tier ARA paling agresif (70%) + cap relatif ringan':'Likuiditas & momentum nama menarik perhatian ritel')
+               :(e.per<15?'Valuasi murah dengan fundamentаl solid':e.der<1?'Neraca sehat, risiko gagal bayar rendah':'Kualitas oke tapi cermati harga');
+  return `<div class="card" style="display:grid;grid-template-columns:34px 1fr;gap:14px;align-items:center;${i===0?'border-color:'+e.color+';box-shadow:0 0 0 1px '+e.color+'55':''}">
+    <div style="text-align:center"><div class="mono" style="font-size:22px;font-weight:800;color:${i===0?e.color:'var(--muted2)'}">${i+1}</div>${i===0?'<div style="font-size:8.5px;font-weight:800;color:'+e.color+';letter-spacing:.05em">UNTUK KAMU</div>':''}</div>
+    <div>
+      <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap">
+        <span class="dot" style="background:${e.color}"></span><b style="font-size:15px">${e.k}</b>
+        <span class="muted" style="font-size:12px">${e.sec}</span>
+        <span style="margin-left:auto;display:flex;align-items:center;gap:8px"><span class="mono" style="font-weight:800;color:${e.color};font-size:18px">${sc}</span><span class="muted" style="font-size:11px">/100</span></span>
+      </div>
+      <div class="bar" style="margin:9px 0 11px"><i style="width:${sc}%;background:linear-gradient(90deg,${e.color}99,${e.color})"></i></div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;font-size:12.5px">
+        ${[m1,m2,m3].map(m=>`<div><div class="muted" style="font-size:10px;text-transform:uppercase;letter-spacing:.04em">${m[0]}</div><div class="mono" style="font-weight:700;margin-top:2px">${m[1]}</div></div>`).join('')}
+      </div>
+      <div style="margin-top:10px;font-size:12px;color:var(--ink2)"><span style="color:${e.color}">▸</span> ${why}</div>
+    </div></div>`;}).join('');
+ return `<div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:16px">
+   <div class="seg"><button class="${isT?'on':''}" onclick="personaMode='trader';render()">⚡ Trader</button><button class="${!isT?'on':''}" onclick="personaMode='investor';render()">🏛 Investor</button></div>
+   <span class="muted" style="font-size:12.5px">Beranda menyusun ulang & menonjolkan ${isT?'<b style=color:var(--ink)>ARA, likuiditas, modal masuk</b>':'<b style=color:var(--ink)>PER, ROE, DER</b>'} sesuai gaya kamu.</span>
+ </div>
+ <div class="grid">${rows}</div>`;
+}
+
+/* ---- 02 WIZARD ---- */
+let wiz={step:1,budget:5000000,horizon:null,risk:null};
+function renderWizard(){
+ if(wiz.step<=3){
+  const dots=[1,2,3].map(s=>`<span class="dot" style="width:26px;height:5px;border-radius:4px;background:${s<=wiz.step?'var(--accent)':'var(--line2)'}"></span>`).join('');
+  let body='';
+  if(wiz.step===1){body=`<h3 style="font-size:17px;margin-bottom:4px">1 · Berapa budget kamu?</h3><p class="muted" style="font-size:12.5px;margin-bottom:16px">Dana yang siap dialokasikan untuk ikut IPO.</p>
+    <input id="wb" type="range" min="1000000" max="50000000" step="500000" value="${wiz.budget}" style="width:100%;accent-color:var(--accent)" oninput="wiz.budget=+this.value;document.getElementById('wbv').textContent=rp(+this.value)">
+    <div style="text-align:center;margin:14px 0"><span id="wbv" class="mono" style="font-size:30px;font-weight:800;color:var(--accent)">${rp(wiz.budget)}</span></div>
+    <div style="text-align:right"><button class="btn" onclick="wiz.step=2;render()">Lanjut →</button></div>`;}
+  if(wiz.step===2){const opt=[['flip','Flip / ARA','Jual cepat 1–3 hari'],['swing','Swing','Beberapa minggu'],['hold','Jangka panjang','Pegang &gt; 6 bulan']];
+   body=`<h3 style="font-size:17px;margin-bottom:4px">2 · Horizon kamu?</h3><p class="muted" style="font-size:12.5px;margin-bottom:16px">Mau dipegang berapa lama.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px">${opt.map(o=>`<div class="chip ${wiz.horizon===o[0]?'on':''}" style="flex-direction:column;align-items:flex-start;padding:13px 16px;border-radius:12px" onclick="wiz.horizon='${o[0]}';render()"><b>${o[1]}</b><span style="font-size:10.5px;color:var(--muted)">${o[2]}</span></div>`).join('')}</div>
+    <div style="display:flex;justify-content:space-between"><button class="btn ghost" onclick="wiz.step=1;render()">← Kembali</button><button class="btn" ${wiz.horizon?'':'disabled style=opacity:.4'} onclick="${wiz.horizon?'wiz.step=3;render()':''}">Lanjut →</button></div>`;}
+  if(wiz.step===3){const opt=[['low','Konservatif','Utamakan keamanan'],['mid','Sedang','Seimbang'],['high','Agresif','Berani gocar/gorengan']];
+   body=`<h3 style="font-size:17px;margin-bottom:4px">3 · Toleransi risiko?</h3><p class="muted" style="font-size:12.5px;margin-bottom:16px">Seberapa nyaman dengan fluktuasi.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px">${opt.map(o=>`<div class="chip ${wiz.risk===o[0]?'on':''}" style="flex-direction:column;align-items:flex-start;padding:13px 16px;border-radius:12px" onclick="wiz.risk='${o[0]}';render()"><b>${o[1]}</b><span style="font-size:10.5px;color:var(--muted)">${o[2]}</span></div>`).join('')}</div>
+    <div style="display:flex;justify-content:space-between"><button class="btn ghost" onclick="wiz.step=2;render()">← Kembali</button><button class="btn" ${wiz.risk?'':'disabled style=opacity:.4'} onclick="${wiz.risk?'wiz.step=4;render()':''}">Lihat rekomendasi ✦</button></div>`;}
+  return `<div style="margin-bottom:14px;display:flex;gap:7px">${dots}</div><div class="card" style="max-width:620px">${body}</div>`;
+ }
+ // result
+ const W=wiz.horizon==='hold'?WI:wiz.horizon==='flip'?WT:WT.map((w,i)=>(w+WI[i])/2);
+ let pool=[...E];
+ if(wiz.risk==='low')pool=pool.filter(e=>e.der<2&&e.per<40);
+ if(wiz.risk==='high')pool=pool.sort((a,b)=>b.araDay1-a.araDay1);
+ const ranked=pool.map(e=>({e,s:wscore(e.sc,W)})).sort((a,b)=>b.s-a.s).slice(0,3);
+ const cards=ranked.map((r,i)=>{const e=r.e;const lots=Math.floor((wiz.budget/ranked.length)/(e.phi*100));const cost=lots*e.phi*100;
+  return `<div class="card" style="border-color:${i===0?e.color:'var(--line)'}">
+   <div style="display:flex;align-items:center;gap:9px;margin-bottom:8px"><span class="dot" style="background:${e.color}"></span><b style="font-size:15px">${e.k}</b>${i===0?`<span style="font-size:9.5px;font-weight:800;color:${e.color};border:1px solid ${e.color};padding:2px 8px;border-radius:20px">TOP PICK</span>`:''}<span class="mono" style="margin-left:auto;font-weight:800;color:${e.color}">${r.s}</span></div>
+   <div class="muted" style="font-size:11.5px;margin-bottom:10px">${e.sec}</div>
+   <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;font-size:12px">
+     <div><div class="muted" style="font-size:10px">Saran lot</div><div class="mono" style="font-weight:800;font-size:16px;color:var(--accent)">${lots} lot</div></div>
+     <div><div class="muted" style="font-size:10px">Dana disiapkan</div><div class="mono" style="font-weight:800;font-size:16px">${rp(cost)}</div></div>
+   </div></div>`;}).join('');
+ const total=ranked.reduce((s,r)=>{const e=r.e;return s+Math.floor((wiz.budget/ranked.length)/(e.phi*100))*e.phi*100;},0);
+ return `<div class="card" style="background:linear-gradient(135deg,var(--accentBg),var(--panel));border-color:var(--accent);margin-bottom:14px">
+    <div style="font-size:12px;color:var(--accent);font-weight:700;letter-spacing:.04em">REKOMENDASI UNTUK KAMU</div>
+    <div style="font-size:14px;color:var(--ink2);margin-top:6px">Budget ${rp(wiz.budget)} · ${({flip:'Flip/ARA',swing:'Swing',hold:'Jangka panjang'})[wiz.horizon]} · Risiko ${({low:'konservatif',mid:'sedang',high:'agresif'})[wiz.risk]}</div>
+    <div style="margin-top:8px;font-size:12.5px">Total dana terpakai (estimasi): <b class="mono" style="color:var(--up)">${rp(total)}</b> · sisa buffer ${rp(wiz.budget-total)}</div>
+   </div>
+   <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">${cards}</div>
+   <div style="margin-top:14px"><button class="btn ghost" onclick="wiz={step:1,budget:5000000,horizon:null,risk:null};render()">↺ Mulai ulang</button></div>`;
+}
+
+/* ---- 03 CARD VARIANTS ---- */
+let cardEm='RANS';
+function renderCards(){
+ const e=byK(cardEm);const seq=araSeq(e,3);
+ const spark=sparkSVG(seq,e.color,150,40);
+ const v1=`<div class="card mono" style="border-radius:8px;background:#080d15">
+   <div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:8px"><b style="color:${e.color};letter-spacing:.05em">${e.k}</b><span class="muted" style="font-size:11px">${e.listing}</span></div>
+   ${[['HARGA','Rp'+e.price],['PER',e.per+'x'],['PBV',e.pbv+'x'],['ROE',e.roe+'%'],['DER',e.der+'x'],['ARA-1',e.araDay1+'%']].map(r=>`<div style="display:flex;justify-content:space-between;font-size:12px;padding:3px 0"><span class="muted">${r[0]}</span><span style="font-weight:700">${r[1]}</span></div>`).join('')}
+   <div style="margin-top:8px;text-align:center;font-size:10px;color:var(--up);border:1px solid var(--line);border-radius:5px;padding:5px">TRADER ${e.trader} · INVESTOR ${e.investor}</div></div>`;
+ const v2=`<div class="card" style="border-radius:18px">
+   <div style="display:flex;align-items:center;gap:10px"><div style="width:38px;height:38px;border-radius:11px;background:${e.color}22;display:flex;align-items:center;justify-content:center;font-weight:800;color:${e.color}">${e.k.slice(0,2)}</div>
+     <div><b style="font-size:15px">${e.k}</b><div class="muted" style="font-size:11px">${e.sec}</div></div></div>
+   <div style="display:flex;align-items:baseline;gap:8px;margin:16px 0 4px"><span class="mono" style="font-size:26px;font-weight:800">Rp${e.price}</span><span class="muted" style="font-size:12px">/lembar</span></div>
+   <div style="display:flex;gap:18px;font-size:12.5px;color:var(--ink2)"><span>PER <b style="color:var(--ink)">${e.per}x</b></span><span>ROE <b style="color:var(--ink)">${e.roe}%</b></span><span>DER <b style="color:var(--ink)">${e.der}x</b></span></div>
+   <button class="btn" style="width:100%;justify-content:center;margin-top:16px;border-radius:11px">Lihat detail →</button></div>`;
+ const v3=`<div class="card" style="border-radius:16px;overflow:hidden;position:relative">
+   <div style="position:absolute;inset:0;background:linear-gradient(160deg,${e.color}14,transparent 60%)"></div>
+   <div style="position:relative">
+     <div style="display:flex;justify-content:space-between;align-items:center"><b style="font-size:16px">${e.k}</b><span style="font-size:10px;font-weight:700;background:${e.color}22;color:${e.color};padding:3px 9px;border-radius:20px">${e.tag}</span></div>
+     <div style="margin:12px 0">${spark}</div>
+     <div class="muted" style="font-size:10.5px;margin-top:-4px">Skenario ARA optimistis · ${e.araDay1}%→${e.araNorm}%</div>
+     <div style="display:flex;justify-content:space-between;margin-top:12px;font-size:12.5px"><span class="muted">Min. beli</span><b class="mono">${rp(e.phi*100)}</b></div>
+     <div style="display:flex;justify-content:space-between;margin-top:5px;font-size:12.5px"><span class="muted">Potensi ARA-1</span><b class="up">+${e.araDay1}%</b></div>
+   </div></div>`;
+ const pickEm=E.map(x=>`<div class="chip ${x.k===cardEm?'on':''}" onclick="cardEm='${x.k}';render()"><span class="dot" style="background:${x.color}"></span>${x.k}</div>`).join('');
+ return `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">${pickEm}</div>
+   <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(230px,1fr))">
+     <div><div class="muted" style="font-size:11px;margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">A · Terminal padat</div>${v1}</div>
+     <div><div class="muted" style="font-size:11px;margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">B · Konsumen bersih</div>${v2}</div>
+     <div><div class="muted" style="font-size:11px;margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">C · Sparkline-forward</div>${v3}</div>
+   </div>`;
+}
+function sparkSVG(arr,col,w,h){const mn=Math.min(...arr),mx=Math.max(...arr),rng=(mx-mn)||1;
+ const pts=arr.map((v,i)=>[(i/(arr.length-1))*w,h-((v-mn)/rng)*(h-6)-3]);
+ const d=pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+ const area=d+` L ${w} ${h} L 0 ${h} Z`;
+ return `<svg viewBox="0 0 ${w} ${h}" width="100%" height="${h}" preserveAspectRatio="none"><defs><linearGradient id="g${col.slice(1)}" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="${col}" stop-opacity=".35"/><stop offset="1" stop-color="${col}" stop-opacity="0"/></linearGradient></defs><path d="${area}" fill="url(#g${col.slice(1)})"/><path d="${d}" fill="none" stroke="${col}" stroke-width="2.2"/>${pts.map(p=>`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="2.6" fill="${col}"/>`).join('')}</svg>`;
+}
+
+/* ---- 04 VALUATION MAP ---- */
+let mapSel=null;
+function renderMap(){
+ const W=620,H=420,pad=52;
+ const xs=E.map(e=>e.per),ys=E.map(e=>e.pbv);
+ const xmin=0,xmax=Math.max(...xs)*1.1,ymin=1,ymax=Math.max(...ys)*1.12;
+ const X=v=>pad+(v-xmin)/(xmax-xmin)*(W-pad-20);
+ const Y=v=>H-pad-(v-ymin)/(ymax-ymin)*(H-pad-20);
+ const R=m=>8+Math.sqrt(m)/Math.sqrt(Math.max(...E.map(e=>e.mcap)))*26;
+ const gx=[10,20,30,40,50].filter(v=>v<=xmax);
+ const grid=gx.map(v=>`<line x1="${X(v)}" y1="${pad-10}" x2="${X(v)}" y2="${H-pad}" stroke="var(--line)"/><text x="${X(v)}" y="${H-pad+16}" fill="var(--muted)" font-size="10" text-anchor="middle">${v}x</text>`).join('')
+  +[1.5,2,2.5,3,3.5].filter(v=>v<=ymax).map(v=>`<line x1="${pad}" y1="${Y(v)}" x2="${W-20}" y2="${Y(v)}" stroke="var(--line)"/><text x="${pad-8}" y="${Y(v)+3}" fill="var(--muted)" font-size="10" text-anchor="end">${v}</text>`).join('');
+ const cheap=`<rect x="${pad}" y="${Y(2.2)}" width="${X(16)-pad}" height="${H-pad-Y(2.2)}" fill="var(--up)" opacity=".06"/><text x="${pad+8}" y="${H-pad-8}" fill="var(--up)" font-size="10" opacity=".8">zona murah</text>`;
+ const bubbles=E.map(e=>{const sel=mapSel===e.k;return `<g style="cursor:pointer" onclick="mapSel='${e.k}';render()" onmousemove="showTip('<b style=color:${e.color}>${e.k}</b> · ${e.sec}<br>PER ${e.per}x · PBV ${e.pbv}x<br>Kapitalisasi Rp${e.mcap} M',event.clientX,event.clientY)" onmouseleave="hideTip()">
+    <circle cx="${X(e.per)}" cy="${Y(e.pbv)}" r="${R(e.mcap)}" fill="${e.color}" opacity="${sel?.95:.55}" stroke="${e.color}" stroke-width="${sel?3:1}"/>
+    <text x="${X(e.per)}" y="${Y(e.pbv)+4}" fill="#04121a" font-size="11" font-weight="800" text-anchor="middle">${e.k.slice(0,2)}</text></g>`;}).join('');
+ const detail=mapSel?(()=>{const e=byK(mapSel);return `<div class="card" style="border-color:${e.color}">
+   <div style="display:flex;align-items:center;gap:9px;margin-bottom:10px"><span class="dot" style="background:${e.color}"></span><b>${e.k}</b><span class="muted" style="font-size:12px">${e.name}</span></div>
+   <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;font-size:12.5px">
+   ${[['PER',e.per+'x'],['PBV',e.pbv+'x'],['Kapitalisasi','Rp'+e.mcap+' M'],['ROE / DER',e.roe+'% / '+e.der+'x']].map(m=>`<div><div class="muted" style="font-size:10px">${m[0]}</div><div class="mono" style="font-weight:700">${m[1]}</div></div>`).join('')}</div></div>`;})():`<div class="card muted" style="font-size:12.5px;display:flex;align-items:center;justify-content:center;min-height:120px">Klik salah satu gelembung untuk detail →</div>`;
+ return `<div class="grid" style="grid-template-columns:1.4fr 1fr;align-items:start">
+   <div class="card"><svg viewBox="0 0 ${W} ${H}" width="100%">${grid}${cheap}
+     <text x="${W/2}" y="${H-12}" fill="var(--ink2)" font-size="11" text-anchor="middle">PER → makin kanan makin mahal</text>
+     <text x="16" y="${H/2}" fill="var(--ink2)" font-size="11" text-anchor="middle" transform="rotate(-90 16 ${H/2})">PBV →</text>
+     ${bubbles}</svg>
+     <div class="muted" style="font-size:10.5px;margin-top:6px">Ukuran gelembung = kapitalisasi pasar. Hover untuk info, klik untuk detail.</div></div>
+   ${detail}</div>`;
+}
+
+/* ---- 05 HEATMAP ---- */
+let heatView='trader';
+function renderHeat(){
+ const metrics=[
+  {n:'PER (x)',g:e=>e.per,low:1},{n:'PBV (x)',g:e=>e.pbv,low:1},{n:'ROE (%)',g:e=>e.roe,low:0},
+  {n:'DER (x)',g:e=>e.der,low:1},{n:'Net margin (%)',g:e=>e.nm,low:0},{n:'ARA hari-1 (%)',g:e=>e.araDay1,low:0},
+  {n:'Skor '+(heatView==='trader'?'Trader':'Investor'),g:e=>e[heatView],low:0,hl:1}];
+ const head=`<tr><th class="l">Metrik</th>${E.map(e=>`<th style="color:${e.color}">${e.k}</th>`).join('')}</tr>`;
+ const body=metrics.map(m=>{const vals=E.map(m.g);const mn=Math.min(...vals),mx=Math.max(...vals),rng=(mx-mn)||1;
+  return `<tr style="${m.hl?'border-top:2px solid var(--line2)':''}"><td class="l" style="${m.hl?'font-weight:800;color:var(--ink)':''}">${m.n}</td>${E.map(e=>{const v=m.g(e);let t=(v-mn)/rng;if(m.low)t=1-t;
+   const col=t>.66?'25,217,138':t>.33?'255,181,71':'255,92,120';const a=.14+t*.34;
+   return `<td style="background:rgba(${col},${a.toFixed(2)});font-weight:${m.hl?800:600};color:${m.hl?'var(--ink)':'var(--ink2)'}">${typeof v==='number'&&v%1?v.toFixed(2):v}${m.hl?'':''}</td>`;}).join('')}</tr>`;}).join('');
+ return `<div style="display:flex;align-items:center;gap:12px;margin-bottom:14px"><div class="seg"><button class="${heatView==='trader'?'on':''}" onclick="heatView='trader';render()">⚡ Trader</button><button class="${heatView==='investor'?'on':''}" onclick="heatView='investor';render()">🏛 Investor</button></div><span class="muted" style="font-size:12.5px">Hijau = paling menarik di baris itu · merah = terlemah</span></div>
+   <div class="card" style="overflow-x:auto"><table class="t">${head}${body}</table></div>`;
+}
+
+/* ---- 06 CALENDAR ---- */
+function renderCalendar(){
+ const days=[6,7,8,9,10,11];const today=4;
+ const evs={7:['BACH','JECX','JELI'],8:['EMMI'],10:['RANS']};
+ const lane=days.map(d=>{const list=(evs[d]||[]);const dd=d-today;
+  return `<div style="flex:1;min-width:96px;text-align:center">
+    <div class="muted" style="font-size:11px">${d} Jul</div>
+    <div style="height:1px;background:var(--line);margin:8px 0;position:relative"><span style="position:absolute;left:50%;top:-3px;width:7px;height:7px;border-radius:50%;background:${list.length?'var(--accent)':'var(--line2)'};transform:translateX(-50%)"></span></div>
+    ${list.length>2?`<div style="font-size:9.5px;font-weight:800;color:var(--down);margin-bottom:5px">⚠ ${list.length} IPO sehari</div>`:''}
+    ${list.map(k=>{const e=byK(k);return `<div style="background:${e.color}1a;border:1px solid ${e.color}55;border-radius:8px;padding:7px 6px;margin-bottom:5px">
+      <b style="font-size:12px;color:${e.color}">${e.k}</b><div class="muted" style="font-size:9.5px">${dd<=0?'hari ini':'H-'+dd}</div></div>`;}).join('')||'<div style="height:6px"></div>'}
+  </div>`;}).join('');
+ const cd=E.filter(e=>e.day).sort((a,b)=>a.day-b.day).map(e=>{const dd=e.day-today;const seq=araSeq(e,3);
+  return `<div class="card" style="display:flex;align-items:center;gap:14px">
+    <div style="text-align:center;min-width:58px"><div class="mono" style="font-size:24px;font-weight:800;color:${e.color}">H-${dd}</div><div class="muted" style="font-size:10px">${e.listing}</div></div>
+    <div style="flex:1"><div style="display:flex;align-items:center;gap:8px"><span class="dot" style="background:${e.color}"></span><b>${e.k}</b><span class="muted" style="font-size:11px">${e.sec}</span></div>
+      <div style="margin-top:6px">${sparkSVG(seq,e.color,200,32)}</div></div>
+    <div style="text-align:right"><div class="muted" style="font-size:10px">est. oversubs</div><div class="mono" style="font-weight:800;color:var(--amber)">~${e.os}×</div></div>
+  </div>`;}).join('');
+ return `<div class="card" style="margin-bottom:14px"><div style="font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:700;letter-spacing:.04em">LINI MASA LISTING · JULI 2026</div>
+    <div style="display:flex;gap:6px;align-items:flex-start">${lane}</div>
+    <div class="note" style="margin-top:14px"><b>7 Juli = tabrakan jadwal:</b> BACH, JECX, JELI listing serentak → perhatian &amp; dana ritel terbagi, peluang ARA hari-1 cenderung tertekan. RANS (10 Jul) listing relatif sendiri.</div></div>
+   <div class="grid">${cd}</div>`;
+}
+
+/* ---- 07 THEME ---- */
+let themeEm='BACH';
+function renderTheme(){
+ const e=byK(themeEm);
+ const tTerminal=`<div style="background:#06090f;border:1px solid #1c2638;border-radius:6px;padding:16px;font-family:'JetBrains Mono',monospace">
+   <div style="color:${e.color};font-weight:800;letter-spacing:.08em;font-size:15px">${e.k}<span style="float:right;color:#6f7d95;font-size:11px">● LIVE</span></div>
+   <div style="color:#aab6c8;font-size:11px;margin:2px 0 12px">${e.sec}</div>
+   ${[['LAST','Rp'+e.price],['PER',e.per+'x'],['ROE',e.roe+'%']].map(r=>`<div style="display:flex;justify-content:space-between;border-top:1px solid #131b2c;padding:6px 0;font-size:12px"><span style="color:#6f7d95">${r[0]}</span><span style="color:#e6edf7;font-weight:700">${r[1]}</span></div>`).join('')}
+   <div style="margin-top:10px;color:#19d98a;font-size:11px">▲ ARA potensi +${e.araDay1}%</div></div>`;
+ const tFintech=`<div style="background:#f6f8fb;border:1px solid #e6eaf0;border-radius:20px;padding:20px;box-shadow:0 10px 30px rgba(20,30,50,.10)">
+   <div style="display:flex;align-items:center;gap:11px"><div style="width:42px;height:42px;border-radius:13px;background:${e.color};display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800">${e.k.slice(0,2)}</div>
+     <div><div style="font-weight:800;color:#0c1320;font-size:15px">${e.k}</div><div style="color:#697587;font-size:11.5px">${e.sec}</div></div></div>
+   <div style="font-size:28px;font-weight:800;color:#0c1320;margin:16px 0 2px">Rp${e.price}</div>
+   <div style="display:inline-block;background:#e3f7ee;color:#0a8f5f;font-size:11px;font-weight:700;padding:4px 11px;border-radius:20px">PER ${e.per}x · ROE ${e.roe}%</div>
+   <button style="width:100%;margin-top:16px;background:#0c1320;color:#fff;border:none;padding:12px;border-radius:13px;font-weight:700;font-family:inherit;cursor:pointer">Ikut IPO</button></div>`;
+ const tBrutal=`<div style="background:#ffe14d;border:3px solid #111;border-radius:0;padding:18px;box-shadow:7px 7px 0 #111;color:#111">
+   <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:900;font-size:20px;letter-spacing:-.02em">${e.k}</span><span style="background:#111;color:#ffe14d;font-weight:800;font-size:11px;padding:3px 9px">${e.tag}</span></div>
+   <div style="font-weight:700;font-size:12px;margin:3px 0 14px">${e.sec}</div>
+   <div style="background:#fff;border:2px solid #111;padding:10px;font-weight:900;font-size:24px">Rp${e.price}</div>
+   <div style="display:flex;gap:10px;margin-top:12px;font-weight:800;font-size:13px"><span style="background:#111;color:#fff;padding:5px 10px">PER ${e.per}x</span><span style="background:#111;color:#fff;padding:5px 10px">ARA ${e.araDay1}%</span></div></div>`;
+ const pickEm=E.map(x=>`<div class="chip ${x.k===themeEm?'on':''}" onclick="themeEm='${x.k}';render()"><span class="dot" style="background:${x.color}"></span>${x.k}</div>`).join('');
+ return `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">${pickEm}</div>
+   <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(230px,1fr))">
+     <div><div class="muted" style="font-size:11px;margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">A · Terminal gelap</div>${tTerminal}</div>
+     <div><div class="muted" style="font-size:11px;margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">B · Fintech terang</div>${tFintech}</div>
+     <div><div class="muted" style="font-size:11px;margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">C · Neo-brutalist</div>${tBrutal}</div>
+   </div>`;
+}
+
+/* ===================== SHELL ===================== */
+let active='persona';
+const nav=document.getElementById('nav');
+nav.innerHTML=CONCEPTS.map(c=>`<div class="pill" id="p_${c.id}" onclick="active='${c.id}';render()"><span class="num">${c.n}</span> ${c.t}</div>`).join('');
+function render(){
+ const c=CONCEPTS.find(x=>x.id===active);
+ CONCEPTS.forEach(x=>document.getElementById('p_'+x.id).classList.toggle('on',x.id===active));
+ const isLiked=liked.has(active);
+ document.getElementById('stage').innerHTML=`
+   <div class="shead">
+     <div class="meta"><div class="tagrow"><span class="tg">Konsep ${c.n}</span>${c.tags.map(t=>`<span class="tg ${t==='UX'?'ux':t==='UI'?'ui':''}">${t}</span>`).join('')}</div>
+       <h2>${c.t}</h2><p class="d">${c.d}</p></div>
+     <button class="like ${isLiked?'on':''}" onclick="toggleLike('${c.id}')"><span class="h">${isLiked?'♥':'♡'}</span>${isLiked?'Disukai':'Tandai suka'}</button>
+   </div>
+   <div style="margin-top:18px">${c.render()}</div>`;
+ renderFav();
+}
+render();
+</script>
+</body>
+</html>

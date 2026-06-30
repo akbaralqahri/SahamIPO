@@ -189,6 +189,7 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--line);color:v
   <button data-tab="grafik">Grafik</button>
   <button data-tab="detail">Detail</button>
   <button data-tab="ara">Skenario ARA</button>
+  <button data-tab="kalender">Kalender</button>
   <button data-tab="skor">Scorecard</button>
   <button data-tab="edukasi">Panduan</button>
 </nav>
@@ -196,12 +197,25 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--line);color:v
 <section class="tab active" id="ringkas">
   <h2 class="sec">Ringkasan Emiten <span class="hint">— klik kartu untuk detail</span></h2>
   <p class="lead">Fokus analis: harga wajar, kesehatan bisnis, modal minimal, dan rencana bila harga bergerak.</p>
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap">
+    <div style="display:inline-flex;background:var(--panel2);border:1px solid var(--line2);border-radius:9px;overflow:hidden">
+      <button id="pT" onclick="setPersona('trader')" style="background:var(--accentBg);color:var(--accent);border:none;padding:9px 17px;font:inherit;font-weight:700;font-size:13px;cursor:pointer">⚡ Trader</button>
+      <button id="pI" onclick="setPersona('investor')" style="background:none;color:var(--muted);border:none;padding:9px 17px;font:inherit;font-weight:700;font-size:13px;cursor:pointer">🏛 Investor</button>
+    </div>
+    <span style="font-size:12.5px;color:var(--muted)">Kartu diurutkan &amp; disorot sesuai gaya kamu. <b style="color:var(--ink2)">Potensi ARA kini memperhitungkan rekam jejak underwriter.</b></span>
+  </div>
   <div class="grid g3" id="cards"></div>
   <div class="note" style="margin-top:16px"><b>Baca cepat:</b> PER rendah = murah terhadap laba · PBV rendah = murah terhadap aset · DER tinggi = banyak utang · "Min. beli" = modal terkecil ikut IPO (1 lot = 100 lembar).</div>
   <div class="grid g2" style="margin-top:4px">
     <div class="card"><h4 style="color:var(--muted);font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;margin-bottom:12px">Sinyal Trader — potensi flip / ARA</h4><div id="rankTrader"></div></div>
     <div class="card"><h4 style="color:var(--muted);font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;margin-bottom:12px">Sinyal Investor — nilai fundamental</h4><div id="rankInvestor"></div></div>
   </div>
+</section>
+
+<section class="tab" id="kalender">
+  <h2 class="sec">Kalender Listing &amp; Hitung Mundur <span class="hint">— tabrakan jadwal &amp; potensi ARA</span></h2>
+  <p class="lead">Lini masa Juli 2026. Listing serentak menekan peluang ARA hari-1 — efek ini sudah masuk ke skor Potensi ARA (termasuk rekam jejak underwriter).</p>
+  <div id="calOut"></div>
 </section>
 
 <section class="tab" id="biaya">
@@ -266,7 +280,7 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--line);color:v
   <div class="grid g2">
     <div class="chartbox"><h3>Pertumbuhan Pendapatan</h3><div class="sub">Rp miliar · 2023–2025</div><div class="cwrap"><canvas id="cRev"></canvas></div></div>
     <div class="chartbox"><h3>Laba Bersih</h3><div class="sub">Rp miliar · 2023–2025</div><div class="cwrap"><canvas id="cNp"></canvas></div></div>
-    <div class="chartbox"><h3>Valuasi: PER vs PBV</h3><div class="sub">Makin kiri-bawah = makin murah</div><div class="cwrap"><canvas id="cVal"></canvas></div></div>
+    <div class="chartbox"><h3>Valuasi: PER vs PBV <span style="font-size:10px;color:var(--accent)">· interaktif</span></h3><div class="sub">Gelembung = kapitalisasi · zona kiri-bawah = murah · arahkan kursor untuk detail</div><div id="valMap" style="margin-top:8px"></div></div>
     <div class="chartbox"><h3>Risiko–Imbal Hasil: ROE vs DER</h3><div class="sub">Ideal: ROE tinggi, DER rendah</div><div class="cwrap"><canvas id="cRisk"></canvas></div></div>
   </div>
   <div class="chartbox"><h3>Modal Minimum (1 Lot)</h3><div class="sub">Rupiah, harga batas atas</div><div class="cwrap" style="height:215px"><canvas id="cLot"></canvas></div></div>
@@ -367,7 +381,7 @@ PRDL:{code:"PRDL",antrian:461771,legal:"PT Prodia Diagnostic Line Tbk",color:"#f
  useNote:"Rp35,7 M lunasi utang (BCA & Panin), ~29% capex (mesin/kalibrasi, software, relayout produksi), ~8,5% modal kerja.",
  trader:"Paling tinggi potensi flip/ARA — harga gocap-an, cap kecil, tier ARA 70%/35%. Klasik IPO gorengan, tapi paling rawan nyangkut.",
  investor:"Murah & margin bagus, tapi laba tak konsisten & bergantung tender pemerintah. Porsi kecil/spekulatif, bukan inti portofolio."},
-JELI:{code:"JELI",antrian:398959,legal:"PT Niramas Utama Tbk (Inaco)",color:"#22d3ee",sektor:"Industri makanan & minuman penutup (nata de coco, jelly, gummy)",pctPublik:25.93,low:900,high:900,fix:1,nominal:100,raise:315.0,listing:"7 Juli 2026",underwriter:"Sucor Sekuritas (full commitment)",eps:28.91,perL:31.1,perH:31.1,pbvL:2.64,pbvH:2.64,mcapL:1215,mcapH:1215,rev:[838.9,788.4,753.1],np:[1.7,11.6,39.0],roe:8.5,der:2.79,nm:5.2,divMax:30,araTier:"Rp200–5.000",araDay1:50,araNorm:25,risikoUtama:"Ketersediaan & volatilitas harga bahan baku",
+JELI:{code:"JELI",antrian:398959,legal:"PT Niramas Utama Tbk (Inaco)",color:"#22d3ee",sektor:"Industri makanan & minuman penutup (nata de coco, jelly, gummy)",pctPublik:21.0,low:900,high:900,fix:1,nominal:100,raise:239.4,saham:266,listing:"7 Juli 2026",underwriter:"Sucor Sekuritas (full commitment)",eps:30.8,perL:29.2,perH:29.2,pbvL:2.96,pbvH:2.96,mcapL:1139,mcapH:1139,rev:[838.9,788.4,753.1],np:[1.7,11.6,39.0],roe:10.1,der:2.79,nm:5.2,divMax:30,araTier:"Rp200–5.000",araDay1:50,araNorm:25,risikoUtama:"Ketersediaan & volatilitas harga bahan baku",
  plus:["Brand konsumen mapan (Inaco/Wong Coco), 4 pabrik, pasar domestik + ekspor","Laba bersih melonjak tajam: Rp1,7 M menjadi Rp39 M (3 thn) lewat efisiensi","Margin bruto naik ke ~39% (dari ~29% di 2023)","ROE tinggi ~27% (basis pra-IPO)","Dana IPO untuk ekspansi kapasitas gummy/jelly & kurangi utang"],
  minus:["Pendapatan justru menurun: Rp839 M menjadi Rp753 M (2023 ke 2025)","Utang tinggi: DER 2,79x","Valuasi tak murah: PER ~31–39x untuk top-line yang menyusut","Risiko harga bahan baku (gula, kelapa, dll.) fluktuatif"],
  use:[{l:"Penyertaan modal anak (NPS) 51%",p:51.04,c:"#22d3ee"},{l:"Capex mesin & gudang 18,4%",p:18.36,c:"#00d68f"},{l:"Bayar utang 10,6%",p:10.63,c:"#ffa033"},{l:"Modal kerja 20%",p:19.97,c:"#3b9dff"}],
@@ -437,12 +451,12 @@ function uwHTML(k){const code=UWMAP[k];if(!code||!UWH[code])return '';const u=UW
 
 const ORDER=["EMMI","BACH","JECX","PRDL","JELI","RANS"];
 const SCORE={
- EMMI:{Valuasi:3,Fundamental:4,Neraca:2,"Moat/Kualitas":2,"Potensi ARA":3,"Keamanan Risiko":2.5,Likuiditas:3},
- BACH:{Valuasi:5,Fundamental:5,Neraca:3,"Moat/Kualitas":3,"Potensi ARA":3,"Keamanan Risiko":3,Likuiditas:3.5},
- JECX:{Valuasi:1.5,Fundamental:2,Neraca:5,"Moat/Kualitas":5,"Potensi ARA":2,"Keamanan Risiko":3.5,Likuiditas:4},
- PRDL:{Valuasi:5,Fundamental:2,Neraca:3,"Moat/Kualitas":3,"Potensi ARA":5,"Keamanan Risiko":2,Likuiditas:2},
- JELI:{Valuasi:2.5,Fundamental:3,Neraca:2,"Moat/Kualitas":4,"Potensi ARA":2.5,"Keamanan Risiko":2.5,Likuiditas:3.5},
- RANS:{Valuasi:2,Fundamental:2.5,Neraca:4.5,"Moat/Kualitas":3.5,"Potensi ARA":3.5,"Keamanan Risiko":2.5,Likuiditas:4},
+ EMMI:{Valuasi:3,Fundamental:4,Neraca:2,"Moat/Kualitas":2,"Potensi ARA":3.3,"Keamanan Risiko":2.5,Likuiditas:3},
+ BACH:{Valuasi:5,Fundamental:5,Neraca:3,"Moat/Kualitas":3,"Potensi ARA":1.4,"Keamanan Risiko":3,Likuiditas:3.5},
+ JECX:{Valuasi:1.5,Fundamental:2,Neraca:5,"Moat/Kualitas":5,"Potensi ARA":2.5,"Keamanan Risiko":3.5,Likuiditas:4},
+ PRDL:{Valuasi:5,Fundamental:2,Neraca:3,"Moat/Kualitas":3,"Potensi ARA":4.3,"Keamanan Risiko":2,Likuiditas:2},
+ JELI:{Valuasi:2.5,Fundamental:3,Neraca:2,"Moat/Kualitas":4,"Potensi ARA":2.9,"Keamanan Risiko":2.5,Likuiditas:3.5},
+ RANS:{Valuasi:2,Fundamental:2.5,Neraca:4.5,"Moat/Kualitas":3.5,"Potensi ARA":4.2,"Keamanan Risiko":2.5,Likuiditas:4},
 };
 const DIMS=["Valuasi","Fundamental","Neraca","Moat/Kualitas","Potensi ARA","Keamanan Risiko","Likuiditas"];
 const W_TRADER={Valuasi:1,Fundamental:0.8,Neraca:0.5,"Moat/Kualitas":0.5,"Potensi ARA":2.2,"Keamanan Risiko":0.8,Likuiditas:1.6};
@@ -463,23 +477,45 @@ function cagr(a){return ((Math.pow(a[2]/a[0],0.5)-1)*100).toFixed(1);}
 
 document.getElementById('kpis').innerHTML=`
  <div class="kpi"><div class="lbl">Emiten</div><div class="val">6</div><div class="sub">termasuk RANS</div></div>
- <div class="kpi"><div class="lbl">Dana dihimpun</div><div class="val">±Rp2,0T</div><div class="sub">3 harga sudah fix</div></div>
+ <div class="kpi"><div class="lbl">Dana dihimpun</div><div class="val">±Rp1,9T</div><div class="sub">3 harga sudah fix</div></div>
  <div class="kpi"><div class="lbl">PER termurah</div><div class="val" style="color:var(--up)">10–13x</div><div class="sub">BACH</div></div>
  <div class="kpi"><div class="lbl">Modal termurah</div><div class="val" style="color:var(--accent)">Rp10rb</div><div class="sub">PRDL · 1 lot</div></div>
  <div class="kpi"><div class="lbl">ARA tertinggi</div><div class="val" style="color:var(--amber)">70%</div><div class="sub">PRDL · RANS · hari-1</div></div>`;
 
-const cards=document.getElementById('cards');
-ORDER.forEach(k=>{const e=E[k];const tr=Math.round(wScore(k,W_TRADER)),iv=Math.round(wScore(k,W_INVES));
- cards.innerHTML+=`<div class="card click" onclick="goDetail('${k}')">
-  <div class="tick2"><span class="tk-logo" style="background:${e.color}">${e.code.slice(0,2)}</span><span class="code">${e.code}</span><span class="pct">${e.pctPublik}%</span></div>
-  <div class="name">${e.legal}</div>
-  <div class="kv"><span class="k">Harga IPO</span><span class="v">Rp${rng(e.low,e.high)}</span></div>
-  <div class="kv"><span class="k">PER</span><span class="v">${rng(e.perL,e.perH)}x</span></div>
-  <div class="kv"><span class="k">PBV</span><span class="v">${rng(e.pbvL,e.pbvH)}x</span></div>
-  <div class="kv"><span class="k">ARA hari-1</span><span class="v" style="color:var(--up)">${e.araDay1}%</span></div>
-  <div class="spend"><div class="lbl">Min. beli (1 lot)</div><div class="amt">${rrp(e.low*100,e.high*100)}</div></div>
-  <div class="verdict">Trader ${tr} · Investor ${iv}<span style="color:var(--muted2)"> /100</span></div></div>`;});
+function uwOf(k){return UWH[UWMAP[k]];}
+function araPotE(e){const u=UWH[UWMAP[e.code]];const tier=e.araDay1/70,size=1-Math.min(1,e.mcapH/4067),uw=(u.ara-1)/1.3,col=COLLIDE[e.code]?0.82:1;return Math.round((uw*0.42+size*0.33+tier*0.25)*col*100);}
+function araPot(k){return araPotE(E[k]);}
+function sparkSVG(arr,col,w,h){const mn=Math.min(...arr),mx=Math.max(...arr),rg=(mx-mn)||1;const pts=arr.map((v,i)=>[(i/(arr.length-1))*w,h-((v-mn)/rg)*(h-6)-3]);const d=pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');const gid='sp'+col.replace('#','');return `<svg viewBox="0 0 ${w} ${h}" width="100%" height="${h}" preserveAspectRatio="none"><defs><linearGradient id="${gid}" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="${col}" stop-opacity=".30"/><stop offset="1" stop-color="${col}" stop-opacity="0"/></linearGradient></defs><path d="${d} L ${w} ${h} L 0 ${h} Z" fill="url(#${gid})"/><path d="${d}" fill="none" stroke="${col}" stroke-width="2"/></svg>`;}
+let persona='trader';
+function setPersona(p){persona=p;var T=document.getElementById('pT'),I=document.getElementById('pI');if(T){T.style.background=p==='trader'?'var(--accentBg)':'none';T.style.color=p==='trader'?'var(--accent)':'var(--muted)';}if(I){I.style.background=p==='investor'?'var(--accentBg)':'none';I.style.color=p==='investor'?'var(--accent)':'var(--muted)';}renderCards();}
+function renderCards(){const box=document.getElementById('cards');const sorted=[...ORDER].sort((a,b)=>persona==='trader'?wScore(b,W_TRADER)-wScore(a,W_TRADER):wScore(b,W_INVES)-wScore(a,W_INVES));
+ box.innerHTML=sorted.map((k,idx)=>{const e=E[k],tr=Math.round(wScore(k,W_TRADER)),iv=Math.round(wScore(k,W_INVES)),ap=araPot(k),u=uwOf(k),top=idx===0,main=persona==='trader'?tr:iv;
+  return `<div class="card click" onclick="goDetail('${k}')" style="${top?'border-color:'+e.color+';box-shadow:0 0 0 1px '+e.color+'66':''}">
+   <div class="tick2"><span class="tk-logo" style="background:${e.color}">${e.code.slice(0,2)}</span><span class="code">${e.code}</span>${top?'<span style="font-size:8.5px;font-weight:800;color:'+e.color+';margin-left:5px">#1 '+(persona==='trader'?'TRADER':'INVESTOR')+'</span>':''}<span class="pct" style="margin-left:auto">${e.pctPublik}%</span></div>
+   <div class="name">${e.legal}</div>
+   <div style="margin:2px 0 7px">${sparkSVG(araSeq(e),e.color,240,34)}<div style="font-size:9px;color:var(--muted2);margin-top:-2px">skenario ARA optimistis</div></div>
+   <div class="kv"><span class="k">Harga IPO</span><span class="v">Rp${rng(e.low,e.high)}${e.fix?' <span style="font-size:8px;color:var(--up);font-weight:700">FIX</span>':''}</span></div>
+   <div class="kv"><span class="k">PER · PBV</span><span class="v">${rng(e.perL,e.perH)}x · ${rng(e.pbvL,e.pbvH)}x</span></div>
+   <div class="kv"><span class="k">Potensi ARA<span title="termasuk rekam jejak underwriter, ukuran emisi & jadwal listing" style="color:var(--muted2);cursor:help"> ⓘ</span></span><span class="v" style="color:var(--amber)">${ap}/100</span></div>
+   <div style="height:6px;margin:1px 0 7px;background:var(--bg2);border-radius:5px;overflow:hidden"><i style="display:block;height:100%;width:${ap}%;background:var(--amber)"></i></div>
+   <div class="kv" style="border-top:1px solid var(--line)"><span class="k">Underwriter</span><span class="v" style="font-size:11px"><b style="color:${e.color}">${u.code}</b> · avg ARA ${(''+u.ara).replace('.',',')}×${u.ara>=1.9?' 🔥':''}</span></div>
+   <div class="spend"><div class="lbl">Min. beli (1 lot)</div><div class="amt">${rrp(e.low*100,e.high*100)}</div></div>
+   <div class="verdict" style="color:${e.color}">${persona==='trader'?'Trader':'Investor'} ${main}<span style="color:var(--muted2)"> /100</span></div></div>`;}).join('');}
+renderCards();
 
+function renderCal(){const DM={EMMI:8,BACH:7,JECX:7,JELI:7,RANS:10};const days=[6,7,8,9,10,11];
+ const evs={};ORDER.forEach(k=>{if(DM[k]){(evs[DM[k]]=evs[DM[k]]||[]).push(k);}});
+ const lane=days.map(d=>{const list=evs[d]||[];
+   return `<div style="flex:1;min-width:88px;text-align:center"><div style="font-size:11px;color:var(--muted)">${d} Jul</div>
+    <div style="height:1px;background:var(--line);margin:8px 0;position:relative"><span style="position:absolute;left:50%;top:-3px;width:7px;height:7px;border-radius:50%;background:${list.length?'var(--accent)':'var(--line2)'};transform:translateX(-50%)"></span></div>
+    ${list.length>2?'<div style="font-size:9.5px;font-weight:800;color:var(--down);margin-bottom:5px">⚠ '+list.length+' IPO</div>':''}
+    ${list.map(k=>{const e=E[k];return '<div style="background:'+e.color+'1a;border:1px solid '+e.color+'55;border-radius:8px;padding:6px 5px;margin-bottom:5px"><b style="font-size:12px;color:'+e.color+'">'+e.code+'</b><div style="font-size:9.5px;color:var(--muted)">H-'+d+'</div></div>';}).join('')||'<div style="height:6px"></div>'}</div>`;}).join('');
+ const cd=ORDER.filter(k=>DM[k]).sort((a,b)=>DM[a]-DM[b]).map(k=>{const e=E[k];
+   return `<div class="card" style="display:flex;align-items:center;gap:14px"><div style="text-align:center;min-width:54px"><div class="mono" style="font-size:23px;font-weight:800;color:${e.color}">H-${DM[k]}</div><div style="font-size:10px;color:var(--muted)">${DM[k]} Jul</div></div>
+    <div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:8px"><span style="width:9px;height:9px;border-radius:50%;background:${e.color};display:inline-block"></span><b>${e.code}</b><span style="font-size:11px;color:var(--muted)">${e.sektor}</span></div><div style="margin-top:6px">${sparkSVG(araSeq(e),e.color,220,30)}</div></div>
+    <div style="text-align:right"><div style="font-size:10px;color:var(--muted)">Potensi ARA</div><div class="mono" style="font-weight:800;color:var(--amber)">${araPot(k)}/100</div><div style="font-size:9.5px;color:var(--muted2)">UW ${uwOf(k).code} ${(''+uwOf(k).ara).replace('.',',')}×</div></div></div>`;}).join('');
+ document.getElementById('calOut').innerHTML=`<div class="card" style="margin-bottom:14px"><div style="font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:700;letter-spacing:.04em">LINI MASA · JULI 2026 (relatif 30 Jun)</div><div style="display:flex;gap:6px;align-items:flex-start;overflow-x:auto">${lane}</div><div class="note" style="margin-top:14px"><b>7 Juli = tabrakan jadwal:</b> BACH, JECX, JELI listing serentak → perhatian &amp; dana ritel terbagi, peluang ARA hari-1 tertekan (sudah tercermin di Potensi ARA). RANS (10 Jul) &amp; EMMI (8 Jul) relatif sendiri; PRDL belum jadwal pasti (Q3).</div></div><div class="grid">${cd}</div>`;}
+renderCal();
 function rankList(W,el){const arr=ORDER.map(k=>({k,s:wScore(k,W)})).sort((a,b)=>b.s-a.s);let h='';
  arr.forEach((x,i)=>{const e=E[x.k];h+=`<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--line)"><b style="width:16px;color:var(--muted2)">${i+1}</b><span class="dot" style="background:${e.color}"></span><b style="width:52px">${e.code}</b><div class="bar" style="flex:1;height:8px"><i style="width:${x.s}%;background:${e.color}"></i></div><b class="mono" style="width:28px;text-align:right">${Math.round(x.s)}</b></div>`;});
  document.getElementById(el).innerHTML=h;}
@@ -586,13 +622,14 @@ const rows=[
  {m:"DER (x)",f:e=>e.der,key:"der",hi:0},
  {m:"Dividen maks",f:e=>e.divMax+"%",key:"divMax",hi:1},
  {m:"ARA hari-1 / berikut",f:e=>`${e.araDay1}% / ${e.araNorm}%`,key:"araDay1",hi:1},
+ {m:"Potensi ARA (+UW) /100",f:e=>araPotE(e)+"",key:e=>araPotE(e),hi:1},
  {m:"Risiko utama",f:e=>e.risikoUtama,raw:1},
 ];
 (function(){let h=`<tr><th>Metrik</th>${ORDER.map(k=>`<th style="color:${E[k].color}">${E[k].code}</th>`).join('')}</tr>`;
- rows.forEach(r=>{let cls={};
-  if(!r.raw&&r.key){const vals=ORDER.map(k=>typeof r.key==='function'?r.key(E[k]):E[k][r.key]);const best=r.hi?Math.max(...vals):Math.min(...vals);const worst=r.hi?Math.min(...vals):Math.max(...vals);
-   ORDER.forEach((k,i)=>{cls[k]=vals[i]===best?'good':(vals[i]===worst?'bad':'mid');});}
-  h+=`<tr><td class="metric">${r.m}</td>${ORDER.map(k=>`<td class="${cls[k]||''}">${r.f(E[k])}</td>`).join('')}</tr>`;});
+ rows.forEach(r=>{let bg={};
+  if(!r.raw&&r.key){const vals=ORDER.map(k=>typeof r.key==='function'?r.key(E[k]):E[k][r.key]);const mn=Math.min(...vals),mx=Math.max(...vals),rg=(mx-mn)||1;
+   ORDER.forEach((k,i)=>{let t=(vals[i]-mn)/rg;if(!r.hi)t=1-t;const c=t>.6?'25,217,138':t>.3?'255,181,71':'255,92,120';bg[k]=`background:rgba(${c},${(.12+t*.34).toFixed(2)});color:var(--ink);font-weight:600`;});}
+  h+=`<tr><td class="metric">${r.m}</td>${ORDER.map(k=>`<td style="${bg[k]||''}">${r.f(E[k])}</td>`).join('')}</tr>`;});
  document.getElementById('cmpTable').innerHTML=h;})();
 
 document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>{
@@ -676,12 +713,23 @@ const verdicts={
  document.getElementById('verdictCards').innerHTML=vc;})();
 
 function themeC(){const cs=getComputedStyle(root);return {grid:cs.getPropertyValue('--grid').trim(),tc:cs.getPropertyValue('--muted').trim()};}
+function valMapSVG(){const W=560,H=300,pad=46;
+ const mid=k=>[(E[k].perL+E[k].perH)/2,(E[k].pbvL+E[k].pbvH)/2];
+ const xmax=Math.max(...ORDER.map(k=>mid(k)[0]))*1.12,ymax=Math.max(...ORDER.map(k=>mid(k)[1]))*1.14;
+ const X=v=>pad+v/xmax*(W-pad-16),Y=v=>H-pad-(v-1)/(ymax-1)*(H-pad-16);
+ const mm=Math.max(...ORDER.map(k=>E[k].mcapH)),R=m=>7+Math.sqrt(m/mm)*22;
+ let g='';[10,20,30,40,50].filter(v=>v<xmax).forEach(v=>g+=`<line x1="${X(v)}" y1="${pad-6}" x2="${X(v)}" y2="${H-pad}" style="stroke:var(--line)"/><text x="${X(v)}" y="${H-pad+15}" style="fill:var(--muted)" font-size="9" text-anchor="middle">${v}x</text>`);
+ [1.5,2,2.5,3,3.5].filter(v=>v<ymax).forEach(v=>g+=`<line x1="${pad}" y1="${Y(v)}" x2="${W-16}" y2="${Y(v)}" style="stroke:var(--line)"/><text x="${pad-6}" y="${Y(v)+3}" style="fill:var(--muted)" font-size="9" text-anchor="end">${v}</text>`);
+ const cheap=`<rect x="${pad}" y="${Y(2.2).toFixed(0)}" width="${(X(16)-pad).toFixed(0)}" height="${(H-pad-Y(2.2)).toFixed(0)}" style="fill:var(--up)" opacity=".07"/><text x="${pad+6}" y="${H-pad-6}" style="fill:var(--up)" font-size="9" opacity=".75">murah</text>`;
+ const b=ORDER.map(k=>{const e=E[k],x=X(mid(k)[0]),y=Y(mid(k)[1]),r=R(e.mcapH);
+   return `<g style="cursor:pointer"><title>${e.code} · ${e.sektor} — PER ${rng(e.perL,e.perH)}x · PBV ${rng(e.pbvL,e.pbvH)}x · kap Rp${rng(e.mcapL,e.mcapH)} M</title><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(1)}" fill="${e.color}" opacity=".58" stroke="${e.color}" stroke-width="1.5"/><text x="${x.toFixed(1)}" y="${(y+3.5).toFixed(1)}" fill="#05121a" font-size="10" font-weight="800" text-anchor="middle">${e.code.slice(0,2)}</text></g>`;}).join('');
+ return `<svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block"><text x="${W/2}" y="${H-2}" style="fill:var(--ink2)" font-size="9" text-anchor="middle">PER → makin mahal</text><text x="11" y="${H/2}" style="fill:var(--ink2)" font-size="9" text-anchor="middle" transform="rotate(-90 11 ${H/2})">PBV →</text>${g}${cheap}${b}</svg>`;}
 function drawCharts(){if(drawn)return;drawn=true;const yrs=['2023','2024','2025'];const {grid,tc}=themeC();
  const ds=key=>ORDER.map(k=>({label:E[k].code,data:E[k][key],borderColor:E[k].color,backgroundColor:E[k].color+'22',tension:.3,borderWidth:2,pointRadius:3}));
  const opt=()=>({responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:tc,usePointStyle:true,boxWidth:7}}},scales:{x:{ticks:{color:tc},grid:{color:grid}},y:{ticks:{color:tc},grid:{color:grid}}}});
  chartList.push(new Chart(cRev,{type:'line',data:{labels:yrs,datasets:ds('rev')},options:opt()}));
  chartList.push(new Chart(cNp,{type:'line',data:{labels:yrs,datasets:ds('np')},options:opt()}));
- chartList.push(new Chart(cVal,{type:'scatter',data:{datasets:ORDER.map(k=>({label:E[k].code,data:[{x:(E[k].perL+E[k].perH)/2,y:(E[k].pbvL+E[k].pbvH)/2}],backgroundColor:E[k].color,pointRadius:10,pointHoverRadius:12}))},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:tc,usePointStyle:true,boxWidth:7}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: PER ${c.parsed.x.toFixed(0)}x, PBV ${c.parsed.y.toFixed(1)}x`}}},scales:{x:{title:{display:true,text:'PER (x)',color:tc},ticks:{color:tc},grid:{color:grid}},y:{title:{display:true,text:'PBV (x)',color:tc},ticks:{color:tc},grid:{color:grid}}}}}));
+ var _vm=document.getElementById('valMap');if(_vm)_vm.innerHTML=valMapSVG();
  chartList.push(new Chart(cRisk,{type:'scatter',data:{datasets:ORDER.map(k=>({label:E[k].code,data:[{x:E[k].der,y:E[k].roe}],backgroundColor:E[k].color,pointRadius:10}))},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:tc,usePointStyle:true,boxWidth:7}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: DER ${c.parsed.x}x, ROE ${c.parsed.y}%`}}},scales:{x:{title:{display:true,text:'DER (kanan = lebih berisiko)',color:tc},ticks:{color:tc},grid:{color:grid}},y:{title:{display:true,text:'ROE % (atas = lebih baik)',color:tc},ticks:{color:tc},grid:{color:grid}}}}}));
  chartList.push(new Chart(cLot,{type:'bar',data:{labels:ORDER.map(k=>E[k].code),datasets:[{label:'Modal 1 lot',data:ORDER.map(k=>E[k].high*100),backgroundColor:ORDER.map(k=>E[k].color)}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>rp(c.parsed.y)}}},scales:{x:{ticks:{color:tc},grid:{display:false}},y:{ticks:{color:tc,callback:v=>'Rp'+v.toLocaleString('id')},grid:{color:grid}}}}}));
  chartList.push(new Chart(cMargin,{type:'bar',data:{labels:ORDER.map(k=>E[k].code),datasets:[{label:'Net margin %',data:ORDER.map(k=>E[k].nm),backgroundColor:ORDER.map(k=>E[k].color)}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:tc},grid:{display:false}},y:{ticks:{color:tc},grid:{color:grid}}}}}));
